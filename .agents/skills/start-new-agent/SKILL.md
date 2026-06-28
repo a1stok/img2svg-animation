@@ -44,6 +44,7 @@ The root `docs/` folder contains universal project rules (e.g., folder structure
 - **[Styling & Design Strategy](../../../docs/styling.md):** Rules for Tailwind CSS usage and the strict color token system.
 - **[Color Scheme](../../../docs/color_scheme.md):** The exact hex codes, visual swatches, and hierarchy of the project's color palette.
 - **[Future Plans](../../../docs/plans.md):** The roadmap of feature ideas and enhancements to be implemented.
+- **[Future Improvements](../../../docs/future-improvements.md):** Planned enhancements beyond the current milestones (color SVG, vtracer, etc.).
 - **[Running Locally](../../../docs/running.md):** Instructions for starting the development server across OS environments.
 - **[Deployment](../../../docs/deployment.md):** Vercel deployment configurations and build commands.
 

@@ -35,9 +35,11 @@ Goal: the user can pick or drop an image file; the app holds it in memory ready 
 
 Goal: send the uploaded image to the server and receive back an SVG string.
 
-- Decide on the conversion engine (Node.js potrace or Python service -- see docs/deployment.md).
+Engine decision: use `node-potrace` with `sharp` preprocessing (grayscale + auto-contrast). Black-and-white output pairs directly with the stroke-dashoffset draw-on animation in M3. Color SVG via vtracer is a planned future improvement (see docs/future-improvements.md).
+
+- Preprocess the image with `sharp` (grayscale, auto-contrast) before tracing.
 - Complete the `api.convert.ts` route: decode base64, call the conversion service, return SVG.
-- Complete or replace `potrace-service.ts` depending on the engine decision.
+- Complete `potrace-service.ts` with tunable params (threshold, turdsize, alphamax, opttolerance).
 - Add a unit test for the conversion service.
 - Display the raw SVG string in a `<pre>` tag so it can be verified before wiring the animator.
 
@@ -64,3 +66,7 @@ Goal: a complete, polished end-to-end experience.
 ## Technical Debt / Refactoring
 
 - Add `v8_middleware` future flag to `react-router.config.ts` to silence remaining console warning.
+
+## Future Improvements
+
+See [docs/future-improvements.md](./future-improvements.md) for planned enhancements beyond the current milestones.
