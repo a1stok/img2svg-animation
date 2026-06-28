@@ -38,6 +38,8 @@ The root `docs/` folder contains universal project rules (e.g., folder structure
 
 **DYNAMIC DOCUMENTATION**: The `docs/` folder contains template files. As you build new components, establish design patterns, or configure deployment, you MUST gradually fill in these templates with accurate, updated information for the project. Do not leave them blank if you make architectural decisions, but do not hallucinate details—fill them out iteratively or when explicitly asked by the user.
 
+**COMMIT RULE:** Any time you edit a file in `docs/`, a skill in `.agents/skills/`, or any `README`, you MUST commit that change before moving on. Follow the rules in **[docs/committing.md](../../../docs/committing.md)**. Do not batch doc-only changes with code changes.
+
 - **[Project Structure](../../../docs/structure.md):** Rules for directory organization, co-location, and forbidding barrel files / default boilerplates.
 - **[Naming & Component Conventions](../../../docs/conventions.md):** Rules for file naming (PascalCase vs camelCase) and React component purity.
 - **[Committing Rules](../../../docs/committing.md):** Rules for writing git commit messages.

@@ -1,28 +1,34 @@
 # Future Improvements
 
-## Color SVG Tracing (vtracer)
+## Advanced Color SVG Mode (vtracer)
 
-The initial implementation uses `node-potrace` for black-and-white tracing, which pairs naturally with the stroke-dashoffset draw-on animation effect.
+The app ships with two conversion modes: a standard B&W mode (the initial version) and an advanced multicolor mode (the future version). Both run from the same API route via an optional `mode` parameter.
 
-A future version could support full-color SVG output using [vtracer](https://github.com/visioncortex/vtracer), a Rust-based tracer with a WASM build that runs in Node without any CLI subprocess or Python sidecar.
+### Mode 1: Standard (current implementation)
 
-### Why vtracer
+- Library: `node-potrace` with `sharp` preprocessing
+- Output: single-color SVG with outline paths
+- Tracing: grayscale + auto-contrast, then threshold-based trace
+- Color: one stroke color, configurable (defaults to black)
+- Animation: stroke-dashoffset draw-on effect. Works cleanly because every path is an outline, not a filled region
 
-- Best-in-class color trace quality
-- WASM build means no external process or language runtime
-- Produces filled-region paths per color layer
+### Mode 2: Advanced Multicolor (planned)
 
-### Animation strategy for color SVGs
+- Library: [vtracer](https://github.com/visioncortex/vtracer), a Rust-based tracer with a WASM build for Node
+- Output: multi-layer SVG with one `<path>` group per detected color region
+- Tracing: full-color quantization, hierarchical clustering, configurable color count
+- Color: preserves original image palette (e.g. 8, 16, or 32 color layers)
+- Animation: stroke-dashoffset does not work on filled region patches. The animation strategy switches to staggered fill-opacity, fading each color layer in sequentially by depth order
 
-Stroke-dashoffset animation does not work on filled region patches. For color SVG, the animation approach must change:
+### Why keep both
 
-- **Staggered fill-opacity**: fade each color layer in sequentially. Clean and elegant.
-- **Clip-path wipe**: reveal the whole image left-to-right or top-to-bottom.
+The standard mode produces the classic pen-drawing animation that is the core experience of this app. It is simple, fast, and reliable for any input image.
 
-The simplest good-looking option is staggered opacity per `<path>` group, sorted by color layer order.
+The advanced mode adds visual richness for users who want color-accurate output and are willing to trade the draw-on line effect for a layered-reveal animation. The two modes are complementary, not replacements for each other.
 
-### Implementation notes
+### Implementation path
 
-- Accept an optional `mode` parameter in `api.convert.ts`: `"bw"` (default) or `"color"`.
-- The service layer swaps between `potrace-service.ts` and a new `vtracer-service.ts`.
-- `SvgPlayer` detects whether the SVG uses `fill` or `stroke` and picks the appropriate Anime.js timeline.
+- Add `mode: "standard" | "advanced"` to the `api.convert.ts` Zod schema (default: `"standard"`)
+- Create `app/services/vtracer-service.ts` that calls the vtracer WASM binary
+- `SvgPlayer` reads the SVG metadata (filled vs stroked paths) and picks the appropriate Anime.js timeline automatically
+- Expose a mode toggle in the UI (Milestone 4 polish phase)
