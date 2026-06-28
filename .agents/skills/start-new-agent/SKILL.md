@@ -5,6 +5,10 @@ description: Initializes a new agent session following strict architectural rule
 
 # Project Rules & Best Practices
 
+## First Step: Orient Yourself
+
+Before doing anything else, read **[docs/plans.md](../../../docs/plans.md)**. It contains the current project status and the ordered list of next tasks. Start from the top incomplete item unless the user directs otherwise.
+
 ## Writing Style
 
 - Do not use emojis anywhere in code, comments, or documentation.
