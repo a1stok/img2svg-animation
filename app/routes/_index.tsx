@@ -369,7 +369,7 @@ export default function Index() {
             )}
             {svgResult !== null && (
               <div
-                className="w-full p-4 flex items-center justify-center bg-white"
+                className="w-full p-8 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900/30 [&>svg]:w-full [&>svg]:max-w-xs [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent"
                 dangerouslySetInnerHTML={{ __html: svgResult }}
               />
             )}
