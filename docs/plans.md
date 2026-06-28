@@ -35,7 +35,7 @@ Goal: the user can pick or drop an image file; the app holds it in memory ready 
 
 Goal: send the uploaded image to the server and receive back an SVG string.
 
-Engine decision: use `node-potrace` with `sharp` preprocessing (grayscale + auto-contrast). Black-and-white output pairs directly with the stroke-dashoffset draw-on animation in M3. Color SVG via vtracer is a planned future improvement (see docs/future-improvements.md).
+Engine decision: use `node-potrace` with `sharp` preprocessing (grayscale + auto-contrast). Black-and-white output pairs directly with the stroke-dashoffset draw-on animation in M3. Color SVG via vtracer is a planned future improvement (see docs/future-improvements/img2svg-coloured.md).
 
 - Preprocess the image with `sharp` (grayscale, auto-contrast) before tracing.
 - Complete the `api.convert.ts` route: decode base64, call the conversion service, return SVG.
@@ -69,4 +69,4 @@ Goal: a complete, polished end-to-end experience.
 
 ## Future Improvements
 
-See [docs/future-improvements.md](./future-improvements.md) for planned enhancements beyond the current milestones.
+See [docs/future-improvements/index.md](./future-improvements/index.md) for planned enhancements beyond the current milestones.
