@@ -237,7 +237,50 @@ export default function Index() {
             onChange={(v) => setParam("threshold", v)}
           />
 
-          <details className="group border-t border-[var(--color-border)] pt-3 mt-1">
+          <div className="border-t border-[var(--color-border)] pt-3 grid grid-cols-2 gap-3 mt-1">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="color" className="text-xs opacity-60">
+                Path Color
+              </label>
+              <input
+                id="color"
+                type="color"
+                value={params.color}
+                onChange={(e) => setParam("color", e.target.value)}
+                className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex justify-between items-center">
+                <label htmlFor="background" className="text-xs opacity-60">
+                  Background
+                </label>
+                <label className="flex items-center gap-1 text-[10px] opacity-60 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={params.isBgTransparent}
+                    onChange={(e) => setParam("isBgTransparent", e.target.checked)}
+                    className="accent-[var(--color-accent)]"
+                  />
+                  Transparent
+                </label>
+              </div>
+              <input
+                id="background"
+                type="color"
+                value={params.background}
+                onChange={(e) => setParam("background", e.target.value)}
+                disabled={params.isBgTransparent}
+                className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent disabled:opacity-20 disabled:cursor-not-allowed"
+              />
+              <span className="text-[10px] opacity-40 leading-tight">
+                Background is just to preview how it fits your site; it won't be drawn in the
+                animation.
+              </span>
+            </div>
+          </div>
+
+          <details className="group border-t border-[var(--color-border)] pt-3">
             <summary className="text-xs font-medium cursor-pointer opacity-80 hover:opacity-100 transition-opacity list-none flex justify-between items-center">
               Advanced Settings
               <span className="opacity-50 text-[10px] group-open:rotate-180 transition-transform">
@@ -307,49 +350,6 @@ export default function Index() {
                     </option>
                   ))}
                 </select>
-              </div>
-
-              <div className="border-t border-[var(--color-border)] pt-3 grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="color" className="text-xs opacity-60">
-                    Path Color
-                  </label>
-                  <input
-                    id="color"
-                    type="color"
-                    value={params.color}
-                    onChange={(e) => setParam("color", e.target.value)}
-                    className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="flex justify-between items-center">
-                    <label htmlFor="background" className="text-xs opacity-60">
-                      Background
-                    </label>
-                    <label className="flex items-center gap-1 text-[10px] opacity-60 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={params.isBgTransparent}
-                        onChange={(e) => setParam("isBgTransparent", e.target.checked)}
-                        className="accent-[var(--color-accent)]"
-                      />
-                      Transparent
-                    </label>
-                  </div>
-                  <input
-                    id="background"
-                    type="color"
-                    value={params.background}
-                    onChange={(e) => setParam("background", e.target.value)}
-                    disabled={params.isBgTransparent}
-                    className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent disabled:opacity-20 disabled:cursor-not-allowed"
-                  />
-                  <span className="text-[10px] opacity-40 leading-tight">
-                    Background is just to preview how it fits your site; it won't be drawn in the
-                    animation.
-                  </span>
-                </div>
               </div>
             </div>
           </details>
