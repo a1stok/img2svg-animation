@@ -14,41 +14,53 @@ The scaffolding includes:
 - `SvgPlayer` (Anime.js) component stub at `app/features/animator/`
 - Husky + lint-staged pre-commit hook running Prettier
 
-## Next Up: Core Feature Implementation
+## Major Milestones (in order)
 
-The following items need to be built out in order. Use the `do-work` skill for each.
+Do not build the next milestone until the previous one is working end-to-end.
+UI polish is deferred to the end. Ship the simplest thing that works at each stage.
 
-### 1. Image Uploader UI (`app/features/uploader/`)
+---
 
-- Wire up drag-and-drop file input using the native HTML `<input>` drag events (no external library).
-- Validate file type (PNG, JPEG, WEBP) and size (max 5MB) on the client before sending.
-- Show a preview of the uploaded image.
-- On submit, send the image as base64 to `POST /api/convert`.
+### Milestone 1: Drag-and-Drop / Upload -- COMPLETED
 
-### 2. Backend Convert Endpoint (`app/routes/api.convert.ts`)
+Goal: the user can pick or drop an image file; the app holds it in memory ready for the next step.
 
-- Accept the base64 image from the request body (already Zod-validated).
-- Decode base64 to a `Buffer`.
-- Pass the `Buffer` to `traceImageToSvg()` in `app/services/potrace-service.ts`.
-- Return the raw SVG string in the JSON response.
+- Accept PNG, JPEG, WEBP (max 5 MB).
+- Use native HTML drag events and `<input type="file">`. No library, no custom UI.
+- Validate type and size on the client and show a plain inline error message.
+- Store the selected file in component state and show a bare `<img>` preview.
+- No submission to the server yet. Just reliable file selection.
 
-### 3. Potrace Service (`app/services/potrace-service.ts`)
+### Milestone 2: Image to SVG -- CURRENT
 
-- The stub is already written. Complete the implementation and add a unit test.
-- Verify it correctly converts a small test PNG buffer into a valid SVG string.
+Goal: send the uploaded image to the server and receive back an SVG string.
 
-### 4. SVG Animator (`app/features/animator/`)
+- Decide on the conversion engine (Node.js potrace or Python service -- see docs/deployment.md).
+- Complete the `api.convert.ts` route: decode base64, call the conversion service, return SVG.
+- Complete or replace `potrace-service.ts` depending on the engine decision.
+- Add a unit test for the conversion service.
+- Display the raw SVG string in a `<pre>` tag so it can be verified before wiring the animator.
 
-- The `SvgPlayer` stub already sets up Anime.js stroke-dashoffset animation.
-- Wire it into the index page so it receives the SVG string returned from the API.
-- Polish the animation timing and easing.
+### Milestone 3: SVG to Animation Code
 
-### 5. Home Page (`app/routes/_index.tsx`)
+Goal: take the SVG path data and produce Anime.js animation parameters.
 
-- Replace the placeholder with the full UI: uploader on the left, animated SVG on the right.
-- Add loading state while the API call is in progress.
+- Wire `SvgPlayer` into the index page to receive the SVG string.
+- Verify stroke-dashoffset animation plays correctly for all paths.
+- Export or display the generated animation config so the user can inspect it.
+
+### Milestone 4: Code to Animation (Playback)
+
+Goal: a complete, polished end-to-end experience.
+
+- Full two-panel home page layout (uploader left, animated SVG right).
+- Loading state during API call.
+- Error toast for failed conversions (using `sonner`).
+- Polish animation timing and easing.
+- Styled drag-and-drop UI (this is when UI polish happens).
+
+---
 
 ## Technical Debt / Refactoring
 
 - Add `v8_middleware` future flag to `react-router.config.ts` to silence remaining console warning.
-- Consider adding an error toast (using `sonner`) for failed conversions.

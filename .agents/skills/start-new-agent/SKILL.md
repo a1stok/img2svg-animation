@@ -9,6 +9,8 @@ description: Initializes a new agent session following strict architectural rule
 
 Before doing anything else, read **[docs/plans.md](../../../docs/plans.md)**. It contains the current project status and the ordered list of next tasks. Start from the top incomplete item unless the user directs otherwise.
 
+**CRITICAL RULE:** Do NOT implement anything or produce any results. Your sole responsibility during this initialization phase is to just outline what's next in the plan for the user to review.
+
 ## Writing Style
 
 - Do not use emojis anywhere in code, comments, or documentation.
@@ -38,6 +40,7 @@ The root `docs/` folder contains universal project rules (e.g., folder structure
 
 - **[Project Structure](../../../docs/structure.md):** Rules for directory organization, co-location, and forbidding barrel files / default boilerplates.
 - **[Naming & Component Conventions](../../../docs/conventions.md):** Rules for file naming (PascalCase vs camelCase) and React component purity.
+- **[Committing Rules](../../../docs/committing.md):** Rules for writing git commit messages.
 - **[Styling & Design Strategy](../../../docs/styling.md):** Rules for Tailwind CSS usage and the strict color token system.
 - **[Color Scheme](../../../docs/color_scheme.md):** The exact hex codes, visual swatches, and hierarchy of the project's color palette.
 - **[Future Plans](../../../docs/plans.md):** The roadmap of feature ideas and enhancements to be implemented.

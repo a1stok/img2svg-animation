@@ -17,7 +17,7 @@ If you're touching code that interacts with the database, follow the [DB TDD wor
 
 If you're touching frontend code with complex state (creating/modifying reducers, complex state transitions, non-trivial state management), follow the [Frontend TDD workflow](FRONTEND-TDD.md).
 
-### Phase 3: Feedback Loops
+### Phase 3: Feedback Loops & Verification
 
 Run each check, fix issues, and re-run until clean. Do these sequentially:
 
@@ -26,9 +26,12 @@ Run each check, fix issues, and re-run until clean. Do these sequentially:
 
 If a check fails, fix the issue and re-run that check before moving to the next one. Do not move on with failing checks.
 
+3. **Verify Acceptance Criteria**: Review the original sub-issue body. Ensure all acceptance criteria are met.
+   - If the implementation is complex, consider invoking a subagent (e.g., `research` or `self`) or manually running the app to verify the end-to-end behavior matches what was promised.
+   - Update the sub-issue on GitHub to check off the completed acceptance criteria boxes (e.g., replace `[ ]` with `[x]`).
+
 ### Phase 4: Commit & Close
 
-1. **Commit**: Once all tests and typechecks pass, commit your work to the active branch.
-   - **Commit Rules**: Write commit messages in plain English, with no emojis, and NO prefixes like "feat:" or "fix:".
+1. **One Commit per Sub-Issue**: Once all tests pass and criteria are verified, commit your work to the active branch following the rules in **[docs/committing.md](../../../docs/committing.md)**.
 2. **Close Sub-Issue**: If you were working on a GitHub sub-issue, close it using the GitHub CLI (`gh issue close <issue-number>`) at the end of your implementation run.
 3. **Draft PR**: If this is the final sub-issue or if you are ready for a code review, push your branch and open a Draft Pull Request. Ensure the PR description says `Closes #<PRD_NUMBER>` so the parent PRD closes when merged.
