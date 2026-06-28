@@ -345,6 +345,10 @@ export default function Index() {
                     disabled={params.isBgTransparent}
                     className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent disabled:opacity-20 disabled:cursor-not-allowed"
                   />
+                  <span className="text-[10px] opacity-40 leading-tight">
+                    Background is just to preview how it fits your site; it won't be drawn in the
+                    animation.
+                  </span>
                 </div>
               </div>
             </div>
