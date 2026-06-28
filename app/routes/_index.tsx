@@ -18,6 +18,7 @@ type ConvertParams = {
   turnPolicy: TurnPolicy
   color: string
   background: string
+  isBgTransparent: boolean
 }
 
 const defaultParams: ConvertParams = {
@@ -30,6 +31,7 @@ const defaultParams: ConvertParams = {
   turnPolicy: "minority",
   color: "#000000",
   background: "#ffffff",
+  isBgTransparent: true,
 }
 
 type SliderFieldProps = {
@@ -159,7 +161,7 @@ export default function Index() {
         formData.append("blackOnWhite", String(params.blackOnWhite))
         formData.append("turnPolicy", params.turnPolicy)
         formData.append("color", params.color)
-        formData.append("background", params.background)
+        formData.append("background", params.isBgTransparent ? "transparent" : params.background)
 
         try {
           const response = await fetch("/api/convert", {
@@ -234,95 +236,119 @@ export default function Index() {
             value={params.threshold}
             onChange={(v) => setParam("threshold", v)}
           />
-          <SliderField
-            id="turd-size"
-            label="Turd Size (speckle removal)"
-            min={0}
-            max={10}
-            step={1}
-            value={params.turdSize}
-            onChange={(v) => setParam("turdSize", v)}
-          />
-          <SliderField
-            id="alpha-max"
-            label="Alpha Max (corner rounding)"
-            min={0}
-            max={1.3334}
-            step={0.01}
-            value={params.alphaMax}
-            onChange={(v) => setParam("alphaMax", v)}
-          />
-          <SliderField
-            id="opt-tolerance"
-            label="Opt Tolerance (curve smoothing)"
-            min={0}
-            max={1}
-            step={0.01}
-            value={params.optTolerance}
-            onChange={(v) => setParam("optTolerance", v)}
-          />
 
-          <div className="border-t border-[var(--color-border)] pt-3 flex flex-col gap-3">
-            <ToggleField
-              id="black-on-white"
-              label="Black on White"
-              description="Trace dark areas on light background. Uncheck to invert."
-              checked={params.blackOnWhite}
-              onChange={(v) => setParam("blackOnWhite", v)}
-            />
-            <ToggleField
-              id="opt-curve"
-              label="Curve Optimization"
-              description="Smooth curves using Bezier fitting."
-              checked={params.optCurve}
-              onChange={(v) => setParam("optCurve", v)}
-            />
-          </div>
+          <details className="group border-t border-[var(--color-border)] pt-3 mt-1">
+            <summary className="text-xs font-medium cursor-pointer opacity-80 hover:opacity-100 transition-opacity list-none flex justify-between items-center">
+              Advanced Settings
+              <span className="opacity-50 text-[10px] group-open:rotate-180 transition-transform">
+                ▼
+              </span>
+            </summary>
 
-          <div className="border-t border-[var(--color-border)] pt-3 flex flex-col gap-2">
-            <label htmlFor="turn-policy" className="text-xs opacity-60">
-              Turn Policy (path ambiguity resolution)
-            </label>
-            <select
-              id="turn-policy"
-              value={params.turnPolicy}
-              onChange={(e) => setParam("turnPolicy", e.target.value as TurnPolicy)}
-              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-1.5 text-sm"
-            >
-              {TURN_POLICY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="border-t border-[var(--color-border)] pt-3 grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="color" className="text-xs opacity-60">
-                Path Color
-              </label>
-              <input
-                id="color"
-                type="color"
-                value={params.color}
-                onChange={(e) => setParam("color", e.target.value)}
-                className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
+            <div className="flex flex-col gap-4 mt-4">
+              <SliderField
+                id="turd-size"
+                label="Turd Size (speckle removal)"
+                min={0}
+                max={10}
+                step={1}
+                value={params.turdSize}
+                onChange={(v) => setParam("turdSize", v)}
               />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="background" className="text-xs opacity-60">
-                Background Color
-              </label>
-              <input
-                id="background"
-                type="color"
-                value={params.background}
-                onChange={(e) => setParam("background", e.target.value)}
-                className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
+              <SliderField
+                id="alpha-max"
+                label="Alpha Max (corner rounding)"
+                min={0}
+                max={1.3334}
+                step={0.01}
+                value={params.alphaMax}
+                onChange={(v) => setParam("alphaMax", v)}
               />
+              <SliderField
+                id="opt-tolerance"
+                label="Opt Tolerance (curve smoothing)"
+                min={0}
+                max={1}
+                step={0.01}
+                value={params.optTolerance}
+                onChange={(v) => setParam("optTolerance", v)}
+              />
+
+              <div className="border-t border-[var(--color-border)] pt-3 flex flex-col gap-3">
+                <ToggleField
+                  id="black-on-white"
+                  label="Black on White"
+                  description="Trace dark areas on light background. Uncheck to invert."
+                  checked={params.blackOnWhite}
+                  onChange={(v) => setParam("blackOnWhite", v)}
+                />
+                <ToggleField
+                  id="opt-curve"
+                  label="Curve Optimization"
+                  description="Smooth curves using Bezier fitting."
+                  checked={params.optCurve}
+                  onChange={(v) => setParam("optCurve", v)}
+                />
+              </div>
+
+              <div className="border-t border-[var(--color-border)] pt-3 flex flex-col gap-2">
+                <label htmlFor="turn-policy" className="text-xs opacity-60">
+                  Turn Policy (path ambiguity resolution)
+                </label>
+                <select
+                  id="turn-policy"
+                  value={params.turnPolicy}
+                  onChange={(e) => setParam("turnPolicy", e.target.value as TurnPolicy)}
+                  className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-1.5 text-sm"
+                >
+                  {TURN_POLICY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="border-t border-[var(--color-border)] pt-3 grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="color" className="text-xs opacity-60">
+                    Path Color
+                  </label>
+                  <input
+                    id="color"
+                    type="color"
+                    value={params.color}
+                    onChange={(e) => setParam("color", e.target.value)}
+                    className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex justify-between items-center">
+                    <label htmlFor="background" className="text-xs opacity-60">
+                      Background
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] opacity-60 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={params.isBgTransparent}
+                        onChange={(e) => setParam("isBgTransparent", e.target.checked)}
+                        className="accent-[var(--color-accent)]"
+                      />
+                      Transparent
+                    </label>
+                  </div>
+                  <input
+                    id="background"
+                    type="color"
+                    value={params.background}
+                    onChange={(e) => setParam("background", e.target.value)}
+                    disabled={params.isBgTransparent}
+                    className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent disabled:opacity-20 disabled:cursor-not-allowed"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          </details>
         </section>
       )}
 
