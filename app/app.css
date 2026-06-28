@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* --- Brand Colors --- */
+@theme {
+  --color-background: oklch(10% 0.02 260);
+  --color-surface: oklch(15% 0.025 260);
+  --color-surface-raised: oklch(18% 0.025 260);
+  --color-border: oklch(25% 0.02 260);
+  --color-accent: oklch(70% 0.2 300);
+  --color-accent-glow: oklch(70% 0.25 300 / 0.3);
+
+  /* --- Typography --- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Radii --- */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+}
+
+/* --- Base --- */
+body {
+  background-color: var(--color-background);
+  color: oklch(90% 0.01 260);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
