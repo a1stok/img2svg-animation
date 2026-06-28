@@ -206,10 +206,11 @@ export default function Index() {
 
       {svgResult !== null && (
         <section className="w-full flex flex-col gap-2" aria-label="SVG output">
-          <p className="text-xs font-medium opacity-60 uppercase tracking-widest">SVG Output</p>
-          <pre className="w-full max-h-96 overflow-auto rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xs leading-relaxed whitespace-pre-wrap break-all">
-            {svgResult}
-          </pre>
+          <p className="text-xs font-medium opacity-60 uppercase tracking-widest">Traced SVG</p>
+          <div
+            className="w-full rounded-lg border border-[var(--color-border)] bg-white p-4 flex items-center justify-center"
+            dangerouslySetInnerHTML={{ __html: svgResult }}
+          />
         </section>
       )}
     </main>

@@ -33,33 +33,40 @@ Goal: the user can pick or drop an image file; the app holds it in memory ready 
 
 ### Milestone 2: Image to SVG -- COMPLETED
 
-Goal: send the uploaded image to the server and receive back an SVG string.
+Goal: send the uploaded image to the server, receive back a B&W SVG, and render it visually so the user can configure and iterate.
 
-Engine decision: use `node-potrace` with `sharp` preprocessing (grayscale + auto-contrast). Black-and-white output pairs directly with the stroke-dashoffset draw-on animation in M3. Color SVG via vtracer is a planned future improvement (see docs/future-improvements/img2svg-coloured.md).
+Engine decision: use `node-potrace` with `sharp` preprocessing (grayscale + auto-contrast). Black-and-white output pairs directly with the stroke-dashoffset draw-on animation. Color SVG via vtracer is a planned future improvement (see docs/future-improvements/img2svg-coloured.md).
 
 - Preprocess the image with `sharp` (grayscale, auto-contrast) before tracing.
-- Complete the `api.convert.ts` route: decode base64, call the conversion service, return SVG.
+- Complete the `api.convert.ts` route: accept `multipart/form-data`, call the conversion service, return SVG.
 - Complete `potrace-service.ts` with tunable params (threshold, turdsize, alphamax, opttolerance).
 - Add a unit test for the conversion service.
-- Display the raw SVG string in a `<pre>` tag so it can be verified before wiring the animator.
+- Render the returned SVG inline so the user sees the B&W trace and can tweak parameters before moving on.
 
 ### Milestone 3: SVG to Animation Code -- CURRENT
 
-Goal: take the SVG path data and produce Anime.js animation parameters.
+Goal: take the traced SVG and produce Anime.js animation parameters the user can inspect.
 
 - Wire `SvgPlayer` into the index page to receive the SVG string.
-- Verify stroke-dashoffset animation plays correctly for all paths.
-- Export or display the generated animation config so the user can inspect it.
+- Parse the SVG paths and generate stroke-dashoffset animation config.
+- Display the generated animation config so the user can inspect it before playback.
 
 ### Milestone 4: Code to Animation (Playback)
+
+Goal: play the animation back in the browser using the generated config.
+
+- Wire the animation config into Anime.js and play the draw-on effect.
+- Verify stroke-dashoffset animation plays correctly for all paths.
+- Show a play/pause control.
+
+### Milestone 5: Polish
 
 Goal: a complete, polished end-to-end experience.
 
 - Full two-panel home page layout (uploader left, animated SVG right).
-- Loading state during API call.
 - Error toast for failed conversions (using `sonner`).
 - Polish animation timing and easing.
-- Styled drag-and-drop UI (this is when UI polish happens).
+- Styled drag-and-drop UI.
 
 ---
 
