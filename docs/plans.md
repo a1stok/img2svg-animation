@@ -31,7 +31,7 @@ Goal: the user can pick or drop an image file; the app holds it in memory ready 
 - Store the selected file in component state and show a bare `<img>` preview.
 - No submission to the server yet. Just reliable file selection.
 
-### Milestone 2: Image to SVG -- CURRENT
+### Milestone 2: Image to SVG -- COMPLETED
 
 Goal: send the uploaded image to the server and receive back an SVG string.
 
@@ -43,7 +43,7 @@ Engine decision: use `node-potrace` with `sharp` preprocessing (grayscale + auto
 - Add a unit test for the conversion service.
 - Display the raw SVG string in a `<pre>` tag so it can be verified before wiring the animator.
 
-### Milestone 3: SVG to Animation Code
+### Milestone 3: SVG to Animation Code -- CURRENT
 
 Goal: take the SVG path data and produce Anime.js animation parameters.
 
