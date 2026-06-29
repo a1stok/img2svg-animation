@@ -43,7 +43,7 @@ Engine decision: use `node-potrace` with `sharp` preprocessing (grayscale + auto
 - Add a unit test for the conversion service.
 - Render the returned SVG inline so the user sees the B&W trace and can tweak parameters before moving on.
 
-### Milestone 3: SVG to Animation Code -- CURRENT
+### Milestone 3: SVG to Animation Code -- COMPLETED
 
 Goal: take the traced SVG and produce Anime.js animation parameters the user can inspect.
 
@@ -51,7 +51,7 @@ Goal: take the traced SVG and produce Anime.js animation parameters the user can
 - Parse the SVG paths and generate stroke-dashoffset animation config.
 - Display the generated animation config so the user can inspect it before playback.
 
-### Milestone 4: Code to Animation (Playback)
+### Milestone 4: Code to Animation (Playback) -- CURRENT
 
 Goal: play the animation back in the browser using the generated config.
 
