@@ -23,7 +23,7 @@ export const defaultParams: ConvertParams = {
   optCurve: true,
   blackOnWhite: true,
   turnPolicy: "minority",
-  color: "#000000",
-  background: "#ffffff",
+  color: "#ffffff",
+  background: "#000000",
   isBgTransparent: true,
 }

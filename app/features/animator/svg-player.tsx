@@ -112,7 +112,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
         <p className="text-xs font-medium opacity-60 uppercase tracking-widest text-center">
           Animation Preview
         </p>
-        <div className="w-full h-full p-8 flex items-center justify-center bg-white rounded-lg border border-[var(--color-border)]">
+        <div className="w-full h-full p-8 flex items-center justify-center bg-[var(--color-surface-raised)] rounded-lg border border-[var(--color-border)]">
           <div
             ref={containerRef}
             className="w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent [&_path]:fill-transparent [&_path]:stroke-[1px]"
