@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
 import type { Route } from "./+types/_index"
 import { ImageUploader, validateImageFile } from "../features/uploader"
 import { usePotrace } from "../features/potrace/use-potrace"
@@ -12,16 +13,20 @@ export const meta: Route.MetaFunction = () => [
 
 export default function Index() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [uploadError, setUploadError] = useState<string | null>(null)
   const [objectUrl, setObjectUrl] = useState<string | null>(null)
 
   const { params, setParam, isConverting, svgResult, convertError, resetState } =
     usePotrace(selectedFile)
 
+  useEffect(() => {
+    if (convertError) {
+      toast.error(convertError)
+    }
+  }, [convertError])
+
   function handleFileSelected(file: File | null) {
     if (file === null) {
       setSelectedFile(null)
-      setUploadError(null)
       resetState()
       return
     }
@@ -29,12 +34,11 @@ export default function Index() {
     const error = validateImageFile(file)
     if (error !== null) {
       setSelectedFile(null)
-      setUploadError(error)
+      toast.error(error)
       return
     }
 
     setSelectedFile(file)
-    setUploadError(null)
     resetState()
 
     // Create object URL for preview
@@ -49,7 +53,7 @@ export default function Index() {
         <p className="text-sm opacity-60">Upload an image to convert it into an animated SVG</p>
       </header>
 
-      <ImageUploader onFileSelected={handleFileSelected} error={uploadError} />
+      <ImageUploader onFileSelected={handleFileSelected} error={null} />
 
       {selectedFile !== null && (
         <section className="w-full flex flex-col gap-6" aria-label="Conversion settings">
@@ -70,8 +74,6 @@ export default function Index() {
           <PotraceControls params={params} setParam={setParam} />
         </section>
       )}
-
-      {convertError !== null && <p className="text-sm text-red-400 text-center">{convertError}</p>}
 
       {objectUrl !== null && (
         <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-6" aria-label="Previews">
