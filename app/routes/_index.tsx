@@ -49,7 +49,7 @@ export default function Index() {
   return (
     <div className="flex flex-col items-center py-12 px-4 gap-12 w-full max-w-4xl mx-auto">
       <section className="relative border border-[var(--color-border)] rounded-2xl w-full overflow-hidden shadow-sm">
-        <div className="relative font-semibold h-[300px] sm:h-[350px] bg-gradient-to-t from-[var(--color-surface)] to-[var(--color-background)] flex flex-col items-center justify-center text-[var(--color-text)]">
+        <div className="relative font-semibold h-[300px] sm:h-[350px] bg-gradient-to-t from-[var(--color-surface)] to-[var(--color-background)] flex flex-col items-center justify-center text-[var(--color-text)] before:absolute before:inset-0 before:content-[''] before:opacity-[0.05] before:z-10 before:pointer-events-none before:bg-[url('https://www.ui-layouts.com/noise.gif')]">
           {/* Grid Background */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:35px_34px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"></div>
 
