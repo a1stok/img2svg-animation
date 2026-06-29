@@ -104,12 +104,14 @@ export default function Index() {
         </section>
       )}
 
-      <button
-        disabled={true}
-        className="mt-8 px-6 py-3 bg-[var(--color-accent)] text-[var(--color-background)] rounded-full font-semibold opacity-50 cursor-not-allowed"
-      >
-        View Animations (Coming Soon)
-      </button>
+      {selectedFile !== null && (
+        <button
+          disabled={true}
+          className="mt-8 px-6 py-3 bg-[var(--color-accent)] text-[var(--color-background)] rounded-full font-semibold opacity-50 cursor-not-allowed"
+        >
+          View Animations (Coming Soon)
+        </button>
+      )}
     </div>
   )
 }
