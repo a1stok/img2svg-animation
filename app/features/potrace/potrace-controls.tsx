@@ -78,45 +78,55 @@ export function PotraceControls({ params, setParam }: PotraceControlsProps) {
         onChange={(v) => setParam("threshold", v)}
       />
 
-      <div className="border-t border-[var(--color-border)] pt-3 grid grid-cols-2 gap-3 mt-1">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="color" className="text-xs opacity-60">
-            Path Color
-          </label>
-          <input
-            id="color"
-            type="color"
-            value={params.color}
-            onChange={(e) => setParam("color", e.target.value)}
-            className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
-          />
+      <div className="border-t border-[var(--color-border)] pt-3 mt-1 flex flex-col gap-4">
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setParam("color", "#000000")
+              setParam("background", "#ffffff")
+            }}
+            className="flex-1 py-1.5 px-3 text-xs font-medium rounded border border-[var(--color-border)] bg-white text-black hover:opacity-80 transition-opacity"
+          >
+            Dark Path / White BG
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setParam("color", "#ffffff")
+              setParam("background", "#000000")
+            }}
+            className="flex-1 py-1.5 px-3 text-xs font-medium rounded border border-[var(--color-border)] bg-[#000000] text-white hover:opacity-80 transition-opacity"
+          >
+            White Path / Dark BG
+          </button>
         </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between items-center">
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="color" className="text-xs opacity-60">
+              Path Color
+            </label>
+            <input
+              id="color"
+              type="color"
+              value={params.color}
+              onChange={(e) => setParam("color", e.target.value)}
+              className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
             <label htmlFor="background" className="text-xs opacity-60">
               Background
             </label>
-            <label className="flex items-center gap-1 text-[10px] opacity-60 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={params.isBgTransparent}
-                onChange={(e) => setParam("isBgTransparent", e.target.checked)}
-                className="accent-[var(--color-accent)]"
-              />
-              Transparent
-            </label>
+            <input
+              id="background"
+              type="color"
+              value={params.background}
+              onChange={(e) => setParam("background", e.target.value)}
+              className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
+            />
           </div>
-          <input
-            id="background"
-            type="color"
-            value={params.background}
-            onChange={(e) => setParam("background", e.target.value)}
-            disabled={params.isBgTransparent}
-            className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent disabled:opacity-20 disabled:cursor-not-allowed"
-          />
-          <span className="text-[10px] opacity-40 leading-tight">
-            Background is just to preview how it fits your site; it won't be drawn in the animation.
-          </span>
         </div>
       </div>
 

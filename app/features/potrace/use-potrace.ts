@@ -47,7 +47,7 @@ export function usePotrace(selectedFile: File | null) {
         formData.append("blackOnWhite", String(params.blackOnWhite))
         formData.append("turnPolicy", params.turnPolicy)
         formData.append("color", params.color)
-        formData.append("background", params.isBgTransparent ? "transparent" : params.background)
+        formData.append("background", params.background)
 
         try {
           const response = await fetch("/api/convert", {
