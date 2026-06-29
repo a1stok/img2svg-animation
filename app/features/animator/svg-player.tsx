@@ -112,7 +112,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
         <p className="text-xs font-medium opacity-60 uppercase tracking-widest text-center">
           Animation Preview
         </p>
-        <div className="w-full h-full p-8 flex items-center justify-center bg-white rounded-lg border border-[var(--color-border)]">
+        <div className="w-full h-full p-8 flex items-center justify-center bg-[var(--color-surface-raised)] rounded-lg border border-[var(--color-border)]">
           <div
             ref={containerRef}
             className="w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent [&_path]:fill-transparent [&_path]:stroke-[1px]"
@@ -172,7 +172,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
                 id="easing"
                 value={easing}
                 onChange={(e) => setEasing(e.target.value)}
-                className="p-2 rounded bg-zinc-100 dark:bg-zinc-800 border border-[var(--color-border)] text-sm"
+                className="p-2 rounded bg-[var(--color-surface-raised)] border border-[var(--color-border)] text-sm"
               >
                 <option value="linear">Linear</option>
                 <option value="inOutSine">Ease In Out Sine</option>
@@ -189,7 +189,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
                 id="direction"
                 value={direction}
                 onChange={(e) => setDirection(e.target.value)}
-                className="p-2 rounded bg-zinc-100 dark:bg-zinc-800 border border-[var(--color-border)] text-sm"
+                className="p-2 rounded bg-[var(--color-surface-raised)] border border-[var(--color-border)] text-sm"
               >
                 <option value="normal">Normal</option>
                 <option value="reverse">Reverse</option>
@@ -221,13 +221,13 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
               </button>
               <button
                 onClick={handlePause}
-                className="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 rounded font-medium text-sm hover:opacity-90 transition-opacity"
+                className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
               >
                 Pause
               </button>
               <button
                 onClick={handleRestart}
-                className="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 rounded font-medium text-sm hover:opacity-90 transition-opacity"
+                className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
               >
                 Restart
               </button>
@@ -238,7 +238,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
         {/* Code Output */}
         <div className="w-full md:w-1/2 flex flex-col gap-4">
           <h3 className="text-lg font-semibold">Generated Config (Anime.js V4)</h3>
-          <pre className="p-4 bg-zinc-900 text-zinc-100 rounded-lg overflow-x-auto text-xs h-full">
+          <pre className="p-4 bg-[var(--color-surface-raised)] text-[var(--color-text)] rounded-lg overflow-x-auto text-xs h-full">
             <code>{generatedCode}</code>
           </pre>
         </div>
