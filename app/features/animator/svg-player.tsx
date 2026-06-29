@@ -6,6 +6,7 @@ export type SvgPlayerProps = {
 }
 
 export function SvgPlayer({ svgString }: SvgPlayerProps) {
+  const [animationMode, setAnimationMode] = useState<"line" | "tracer">("line")
   const [duration, setDuration] = useState(2000)
   const [delay, setDelay] = useState(0)
   const [easing, setEasing] = useState("inOutSine")
@@ -15,70 +16,136 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<any>(null)
 
-  // Parse the SVG string to extract path information
-  const pathCount = useMemo(() => {
-    if (!svgString) return 0
+  // Parse the SVG string to extract path information and colors
+  const parsedPaths = useMemo(() => {
+    if (!svgString) return []
     try {
       const parser = new DOMParser()
       const doc = parser.parseFromString(svgString, "image/svg+xml")
-      return doc.querySelectorAll("path").length
+      return Array.from(doc.querySelectorAll("path")).map((p) => ({
+        fill: p.getAttribute("fill") || "currentColor",
+      }))
     } catch {
-      return 0
+      return []
     }
   }, [svgString])
+
+  const pathCount = parsedPaths.length
 
   useEffect(() => {
     if (!containerRef.current || !svgString) return
 
     if (animationRef.current) {
-      animationRef.current.pause()
+      if (Array.isArray(animationRef.current)) {
+        animationRef.current.forEach((a: any) => a.pause())
+      } else if (animationRef.current.pause) {
+        animationRef.current.pause()
+      }
     }
 
     const paths = containerRef.current.querySelectorAll("path")
     if (paths.length === 0) return
 
-    paths.forEach((path) => {
-      const fill = path.getAttribute("fill") || "currentColor"
-      path.setAttribute("stroke", fill)
-    })
+    if (animationMode === "tracer") {
+      // Tracer mode
+      const dots = containerRef.current.closest(".svg-container")?.querySelectorAll(".tracer-dot")
+      paths.forEach((path) => {
+        path.setAttribute("stroke-opacity", "0.2")
+        const fill = path.getAttribute("fill") || "currentColor"
+        path.setAttribute("stroke", fill)
+        // ensure draw is 1 so path is visible
+        path.style.strokeDashoffset = "0"
+      })
 
-    const drawables = Array.from(paths).map((path) => svg.createDrawable(path as SVGPathElement))
+      if (!dots || dots.length === 0) return
 
-    animationRef.current = animate(drawables, {
-      draw: ["0 0", "0 1"],
-      duration: duration,
-      delay: delay > 0 ? stagger(delay) : 0,
-      ease: easing,
-      alternate: direction === "alternate",
-      loop: loop,
-      autoplay: true,
-    })
+      const animations = Array.from(paths)
+        .map((path, index) => {
+          const dot = dots[index]
+          if (!dot) return null
 
-    if (direction === "reverse") {
-      animationRef.current.reverse()
+          const anim = animate(dot, {
+            ...svg.createMotionPath(path as SVGPathElement),
+            duration: duration,
+            delay: delay > 0 ? index * delay : 0,
+            ease: easing,
+            alternate: direction === "alternate",
+            loop: loop,
+            autoplay: true,
+          })
+          if (direction === "reverse") {
+            anim.reverse()
+          }
+          return anim
+        })
+        .filter(Boolean)
+
+      animationRef.current = animations
+    } else {
+      // Line drawing mode
+      paths.forEach((path) => {
+        path.removeAttribute("stroke-opacity")
+        const fill = path.getAttribute("fill") || "currentColor"
+        path.setAttribute("stroke", fill)
+      })
+
+      const drawables = Array.from(paths).map((path) => svg.createDrawable(path as SVGPathElement))
+
+      const anim = animate(drawables, {
+        draw: ["0 0", "0 1"],
+        duration: duration,
+        delay: delay > 0 ? stagger(delay) : 0,
+        ease: easing,
+        alternate: direction === "alternate",
+        loop: loop,
+        autoplay: true,
+      })
+
+      if (direction === "reverse") {
+        anim.reverse()
+      }
+      animationRef.current = anim
     }
 
     return () => {
       if (animationRef.current) {
-        animationRef.current.pause()
+        if (Array.isArray(animationRef.current)) {
+          animationRef.current.forEach((a: any) => a.pause())
+        } else if (animationRef.current.pause) {
+          animationRef.current.pause()
+        }
       }
     }
-  }, [svgString, duration, delay, easing, direction, loop])
+  }, [svgString, duration, delay, easing, direction, loop, animationMode])
 
   function handlePlay() {
-    animationRef.current?.play()
+    if (Array.isArray(animationRef.current)) {
+      animationRef.current.forEach((a: any) => a.play())
+    } else {
+      animationRef.current?.play()
+    }
   }
 
   function handlePause() {
-    animationRef.current?.pause()
+    if (Array.isArray(animationRef.current)) {
+      animationRef.current.forEach((a: any) => a.pause())
+    } else {
+      animationRef.current?.pause()
+    }
   }
 
   function handleRestart() {
-    animationRef.current?.restart()
+    if (Array.isArray(animationRef.current)) {
+      animationRef.current.forEach((a: any) => a.restart())
+    } else {
+      animationRef.current?.restart()
+    }
   }
 
   // Generate the Anime.js V4 executable code snippet
-  const generatedCode = `
+  const generatedCode =
+    animationMode === "line"
+      ? `
 import { animate, svg, stagger } from "animejs";
 
 // Extracted ${pathCount} paths from the uploaded image
@@ -105,6 +172,35 @@ const animation = animate(drawables, {
 });
 ${direction === "reverse" ? `\nanimation.reverse();` : ""}
 `.trim()
+      : `
+import { animate, svg } from "animejs";
+
+// Extracted ${pathCount} paths from the uploaded image
+const paths = document.querySelectorAll(".svg-container path");
+const dots = document.querySelectorAll(".tracer-dot");
+
+paths.forEach(path => {
+  path.setAttribute("stroke-opacity", "0.2");
+  const fill = path.getAttribute("fill") || "currentColor";
+  path.setAttribute("stroke", fill);
+});
+
+const animations = Array.from(paths).map((path, index) => {
+  const dot = dots[index];
+  if (!dot) return null;
+
+  const anim = animate(dot, {
+    ...svg.createMotionPath(path),
+    duration: ${duration},
+    delay: ${delay > 0 ? `index * ${delay}` : 0},
+    ease: "${easing}",${direction === "alternate" ? `\n    alternate: true,` : ""}
+    loop: ${loop},
+    autoplay: true,
+  });
+  ${direction === "reverse" ? `\n  anim.reverse();` : ""}
+  return anim;
+});
+`.trim()
 
   return (
     <div className="w-full flex flex-col gap-12">
@@ -113,11 +209,21 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
           Animation Preview
         </p>
         <div className="w-full h-full p-8 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900/30 rounded-lg border border-[var(--color-border)]">
-          <div
-            ref={containerRef}
-            className="w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent [&_path]:fill-transparent [&_path]:stroke-[1px]"
-            dangerouslySetInnerHTML={{ __html: svgString }}
-          />
+          <div className="relative w-full max-w-md svg-container">
+            <div
+              ref={containerRef}
+              className="w-full [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent [&_path]:fill-transparent [&_path]:stroke-[1px]"
+              dangerouslySetInnerHTML={{ __html: svgString }}
+            />
+            {animationMode === "tracer" &&
+              parsedPaths.map((path, i) => (
+                <div
+                  key={i}
+                  className="tracer-dot absolute top-0 left-0 w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] -translate-x-1/2 -translate-y-1/2 z-10"
+                  style={{ backgroundColor: path.fill, color: path.fill }}
+                />
+              ))}
+          </div>
         </div>
       </div>
 
@@ -126,6 +232,24 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
         <div className="w-full md:w-1/2 flex flex-col gap-6">
           <div className="flex flex-col gap-4">
             <h3 className="text-lg font-semibold">Animation Settings</h3>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs opacity-60">Animation Mode</label>
+              <div className="flex bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg border border-[var(--color-border)]">
+                <button
+                  onClick={() => setAnimationMode("line")}
+                  className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${animationMode === "line" ? "bg-white dark:bg-zinc-700 shadow-sm font-medium" : "opacity-70 hover:opacity-100"}`}
+                >
+                  Line Drawing
+                </button>
+                <button
+                  onClick={() => setAnimationMode("tracer")}
+                  className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${animationMode === "tracer" ? "bg-white dark:bg-zinc-700 shadow-sm font-medium" : "opacity-70 hover:opacity-100"}`}
+                >
+                  Tracer
+                </button>
+              </div>
+            </div>
 
             <div className="flex flex-col gap-1">
               <div className="flex justify-between text-xs opacity-60">
