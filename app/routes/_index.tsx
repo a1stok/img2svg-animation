@@ -3,6 +3,7 @@ import type { Route } from "./+types/_index"
 import { ImageUploader, validateImageFile } from "../features/uploader"
 import { usePotrace } from "../features/potrace/use-potrace"
 import { PotraceControls } from "../features/potrace/potrace-controls"
+import { SvgPlayer } from "../features/animator/svg-player"
 
 export const meta: Route.MetaFunction = () => [
   { title: "Image to SVG Animation" },
@@ -104,13 +105,10 @@ export default function Index() {
         </section>
       )}
 
-      {selectedFile !== null && (
-        <button
-          disabled={true}
-          className="mt-8 px-6 py-3 bg-[var(--color-accent)] text-[var(--color-background)] rounded-full font-semibold opacity-50 cursor-not-allowed"
-        >
-          View Animations (Coming Soon)
-        </button>
+      {svgResult !== null && (
+        <section className="w-full flex justify-center mt-8" aria-label="Animation Config">
+          <SvgPlayer svgString={svgResult} />
+        </section>
       )}
     </div>
   )
