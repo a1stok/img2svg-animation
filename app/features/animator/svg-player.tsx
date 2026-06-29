@@ -140,7 +140,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
                 step={100}
                 value={duration}
                 onChange={(e) => setDuration(Number(e.target.value))}
-                className="w-full accent-[var(--color-accent)]"
+                className="w-full accent-[var(--color-accent)] border-none outline-none"
               />
             </div>
 
@@ -157,7 +157,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
                 step={100}
                 value={delay}
                 onChange={(e) => setDelay(Number(e.target.value))}
-                className="w-full accent-[var(--color-accent)]"
+                className="w-full accent-[var(--color-accent)] border-none outline-none"
               />
               <span className="text-[10px] opacity-40 leading-tight">
                 Delays the start of subsequent paths. Noticeable only on images with multiple paths.
