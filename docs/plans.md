@@ -72,7 +72,7 @@ Goal: a complete, polished end-to-end experience.
 
 ## Technical Debt / Refactoring
 
-- Add `v8_middleware` future flag to `react-router.config.ts` to silence remaining console warning.
+(None currently)
 
 ## Future Improvements
 
