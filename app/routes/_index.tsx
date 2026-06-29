@@ -74,32 +74,18 @@ export default function Index() {
       {convertError !== null && <p className="text-sm text-red-400 text-center">{convertError}</p>}
 
       {objectUrl !== null && (
-        <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-6" aria-label="Previews">
-          <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium opacity-60 uppercase tracking-widest">
+        <section className="w-full flex justify-center" aria-label="Previews">
+          <div className="flex flex-col gap-2 w-full max-w-xs">
+            <p className="text-xs font-medium opacity-60 uppercase tracking-widest text-center">
               Original Image
             </p>
-            <div className="w-full h-full p-8 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900/30 rounded-lg border border-[var(--color-border)]">
-              <img
-                src={objectUrl}
-                alt="Original"
-                className="w-full max-w-xs h-auto rounded-xl shadow-xl"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium opacity-60 uppercase tracking-widest">Traced SVG</p>
-            <div className="relative w-full h-full rounded-lg border border-[var(--color-border)] overflow-hidden">
+            <div className="w-full h-full p-4 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900/30 rounded-lg border border-[var(--color-border)] relative overflow-hidden">
               {isConverting && (
                 <div className="absolute inset-0 bg-white/60 dark:bg-black/60 flex items-center justify-center z-10">
                   <span className="text-xs font-medium">Updating...</span>
                 </div>
               )}
-              <div
-                className="w-full h-full p-8 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900/30 [&>svg]:w-full [&>svg]:max-w-xs [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent"
-                dangerouslySetInnerHTML={{ __html: svgResult ?? "" }}
-              />
+              <img src={objectUrl} alt="Original" className="w-full h-auto rounded-xl shadow-xl" />
             </div>
           </div>
         </section>
