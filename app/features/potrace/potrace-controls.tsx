@@ -60,15 +60,6 @@ export function ToggleField({ id, label, description, checked, onChange }: Toggl
   )
 }
 
-const TURN_POLICY_OPTIONS: { value: TurnPolicy; label: string }[] = [
-  { value: "minority", label: "Minority" },
-  { value: "majority", label: "Majority" },
-  { value: "black", label: "Black" },
-  { value: "white", label: "White" },
-  { value: "left", label: "Left" },
-  { value: "right", label: "Right" },
-]
-
 export type PotraceControlsProps = {
   params: ConvertParams
   setParam: <K extends keyof ConvertParams>(key: K, value: ConvertParams[K]) => void
@@ -153,24 +144,6 @@ export function PotraceControls({ params, setParam }: PotraceControlsProps) {
               checked={params.optCurve}
               onChange={(v) => setParam("optCurve", v)}
             />
-          </div>
-
-          <div className="border-t border-[var(--color-border)] pt-3 flex flex-col gap-2">
-            <label htmlFor="turn-policy" className="text-xs opacity-60">
-              Turn Policy (path ambiguity resolution)
-            </label>
-            <select
-              id="turn-policy"
-              value={params.turnPolicy}
-              onChange={(e) => setParam("turnPolicy", e.target.value as TurnPolicy)}
-              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-1.5 text-sm"
-            >
-              {TURN_POLICY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       </details>
