@@ -1,6 +1,6 @@
 {
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "course-video-manager"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": ["node", "vite/client"],
