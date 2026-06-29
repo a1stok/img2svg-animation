@@ -88,7 +88,7 @@ export function PotraceControls({ params, setParam }: PotraceControlsProps) {
             type="color"
             value={params.color}
             onChange={(e) => setParam("color", e.target.value)}
-            className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
+            className="w-full h-8 rounded cursor-pointer bg-transparent"
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -102,7 +102,7 @@ export function PotraceControls({ params, setParam }: PotraceControlsProps) {
             type="color"
             value={params.background}
             onChange={(e) => setParam("background", e.target.value)}
-            className="w-full h-8 rounded border border-[var(--color-border)] cursor-pointer bg-transparent"
+            className="w-full h-8 rounded cursor-pointer bg-transparent"
           />
           <span className="text-[10px] opacity-40 leading-tight">
             Background is just to preview how it fits your site; it won't be drawn in the animation.

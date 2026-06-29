@@ -16,9 +16,9 @@
   --color-border: #404040;
   --color-border-light: #525252;
 
-  /* 2nd main color requested by user */
-  --color-accent: #7c4b4b;
-  --color-accent-dark: #5c3838;
+  /* 2nd main color requested by user (lighter pink) */
+  --color-accent: #ca8282;
+  --color-accent-dark: #a65d5d;
 
   /* Text */
   --color-text: #f5f5f5;
