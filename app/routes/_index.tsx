@@ -48,10 +48,22 @@ export default function Index() {
 
   return (
     <div className="flex flex-col items-center py-12 px-4 gap-12 w-full max-w-4xl mx-auto">
-      <header className="text-center flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">SVG Animator</h1>
-        <p className="text-sm opacity-60">Upload an image to convert it into an animated SVG</p>
-      </header>
+      <section className="relative border border-[var(--color-border)] rounded-2xl w-full overflow-hidden shadow-sm">
+        <div className="relative font-semibold h-[300px] sm:h-[350px] bg-gradient-to-t from-[var(--color-surface)] to-[var(--color-background)] flex flex-col items-center justify-center text-[var(--color-text)]">
+          {/* Grid Background */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:35px_34px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"></div>
+
+          <div className="relative z-10 flex flex-col gap-3 text-center px-8">
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-tight">
+              SVG Animator
+            </h1>
+            <p className="text-sm sm:text-base text-[var(--color-text-muted)] max-w-md mx-auto font-normal">
+              Upload any image to trace it into precise SVG paths and generate a custom drawing
+              animation.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <ImageUploader onFileSelected={handleFileSelected} error={null} />
 
