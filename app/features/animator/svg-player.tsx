@@ -37,6 +37,11 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
     const paths = containerRef.current.querySelectorAll("path")
     if (paths.length === 0) return
 
+    paths.forEach((path) => {
+      const fill = path.getAttribute("fill") || "currentColor"
+      path.setAttribute("stroke", fill)
+    })
+
     const drawables = Array.from(paths).map((path) => svg.createDrawable(path as SVGPathElement))
 
     animationRef.current = animate(drawables, {
@@ -74,6 +79,15 @@ import { animate, svg, stagger } from "animejs";
 
 // Extracted ${pathCount} paths from the uploaded image
 const paths = document.querySelectorAll(".svg-container path");
+
+// For line drawing, Anime.js animates the stroke. 
+// We copy the path's fill color to its stroke color, 
+// and in CSS we set the fill to transparent.
+paths.forEach(path => {
+  const fill = path.getAttribute("fill") || "currentColor";
+  path.setAttribute("stroke", fill);
+});
+
 const drawables = Array.from(paths).map(path => svg.createDrawable(path));
 
 // Initialize line drawing animation
@@ -97,7 +111,7 @@ const animation = animate(drawables, {
         <div className="w-full h-full p-8 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900/30 rounded-lg border border-[var(--color-border)]">
           <div
             ref={containerRef}
-            className="w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent [&_path]:fill-transparent [&_path]:stroke-black dark:[&_path]:stroke-white [&_path]:stroke-[1px]"
+            className="w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent [&_path]:fill-transparent [&_path]:stroke-[1px]"
             dangerouslySetInnerHTML={{ __html: svgString }}
           />
         </div>
