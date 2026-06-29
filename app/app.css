@@ -2,16 +2,27 @@
 
 /* --- Brand Colors --- */
 @theme {
-  --color-background: oklch(14% 0 0);
-  --color-surface: oklch(18% 0 0);
-  --color-surface-raised: oklch(22% 0 0);
-  --color-surface-hover: oklch(26% 0 0);
-  --color-border: oklch(16% 0 0);
-  --color-border-light: oklch(22% 0 0);
-  --color-accent: oklch(80% 0 0);
-  --color-accent-dark: oklch(60% 0 0);
-  --color-text: oklch(98% 0 0);
-  --color-text-muted: oklch(70% 0 0);
+  /* Keep the absolute darkest */
+  --color-background: #000000;
+
+  /* Lighter grey surfaces (more steps available) */
+  --color-surface-sunken: #0a0a0a;
+  --color-surface: #171717;
+  --color-surface-raised: #262626;
+  --color-surface-hover: #333333;
+  --color-surface-light: #404040;
+
+  /* Lighter borders */
+  --color-border: #404040;
+  --color-border-light: #525252;
+
+  /* 2nd main color requested by user */
+  --color-accent: #7c4b4b;
+  --color-accent-dark: #5c3838;
+
+  /* Text */
+  --color-text: #f5f5f5;
+  --color-text-muted: #a3a3a3;
 
   /* --- Typography --- */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
