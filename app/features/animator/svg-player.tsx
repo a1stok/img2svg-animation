@@ -8,7 +8,7 @@ export type SvgPlayerProps = {
 export function SvgPlayer({ svgString }: SvgPlayerProps) {
   const [duration, setDuration] = useState(2000)
   const [delay, setDelay] = useState(0)
-  const [easing, setEasing] = useState("easeInOutSine")
+  const [easing, setEasing] = useState("inOutSine")
   const [direction, setDirection] = useState("normal")
   const [loop, setLoop] = useState(false)
 
@@ -49,16 +49,14 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
       duration: duration,
       delay: delay > 0 ? stagger(delay) : 0,
       ease: easing,
-      reversed: direction === "reverse",
       alternate: direction === "alternate",
       loop: loop,
       autoplay: true,
-      onComplete: (anim) => {
-        // Fallback for Anime.js V4 loop bug: manually restart if loop is true
-        // and the animation somehow finished instead of looping infinitely.
-        if (loop) anim.restart()
-      },
     })
+
+    if (direction === "reverse") {
+      animationRef.current.reverse()
+    }
 
     return () => {
       if (animationRef.current) {
@@ -101,10 +99,11 @@ const animation = animate(drawables, {
   draw: ['0 0', '0 1'],
   duration: ${duration},
   delay: ${delay > 0 ? `stagger(${delay})` : 0},
-  ease: "${easing}",${direction !== "normal" ? `\n  ${direction === "reverse" ? "reversed: true," : "alternate: true,"}` : ""}
+  ease: "${easing}",${direction === "alternate" ? `\n  alternate: true,` : ""}
   loop: ${loop},
   autoplay: true,
 });
+${direction === "reverse" ? `\nanimation.reverse();` : ""}
 `.trim()
 
   return (
@@ -176,9 +175,9 @@ const animation = animate(drawables, {
                 className="p-2 rounded bg-zinc-100 dark:bg-zinc-800 border border-[var(--color-border)] text-sm"
               >
                 <option value="linear">Linear</option>
-                <option value="easeInOutSine">Ease In Out Sine</option>
-                <option value="easeOutExpo">Ease Out Expo</option>
-                <option value="spring(1, 80, 10, 0)">Spring</option>
+                <option value="inOutSine">Ease In Out Sine</option>
+                <option value="outExpo">Ease Out Expo</option>
+                <option value="outBounce">Bounce</option>
               </select>
             </div>
 
