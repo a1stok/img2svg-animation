@@ -6,8 +6,8 @@
   --color-surface: oklch(18% 0 0);
   --color-surface-raised: oklch(22% 0 0);
   --color-surface-hover: oklch(26% 0 0);
-  --color-border: oklch(30% 0 0);
-  --color-border-light: oklch(38% 0 0);
+  --color-border: oklch(16% 0 0);
+  --color-border-light: oklch(22% 0 0);
   --color-accent: oklch(80% 0 0);
   --color-accent-dark: oklch(60% 0 0);
   --color-text: oklch(98% 0 0);
