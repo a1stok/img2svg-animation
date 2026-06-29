@@ -48,8 +48,9 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
       draw: ["0 0", "0 1"],
       duration: duration,
       delay: delay > 0 ? stagger(delay) : 0,
-      easing: easing,
-      direction: direction,
+      ease: easing,
+      reversed: direction === "reverse",
+      alternate: direction === "alternate",
       loop: loop,
       autoplay: true,
     })
@@ -95,8 +96,7 @@ const animation = animate(drawables, {
   draw: ['0 0', '0 1'],
   duration: ${duration},
   delay: ${delay > 0 ? `stagger(${delay})` : 0},
-  easing: "${easing}",
-  direction: "${direction}",
+  ease: "${easing}",${direction !== "normal" ? `\n  ${direction === "reverse" ? "reversed: true," : "alternate: true,"}` : ""}
   loop: ${loop},
   autoplay: true,
 });
