@@ -34,4 +34,5 @@ If a check fails, fix the issue and re-run that check before moving to the next 
 
 1. **One Commit per Sub-Issue**: Once all tests pass and criteria are verified, commit your work to the active branch following the rules in **[docs/committing.md](../../../docs/committing.md)**.
 2. **Close Sub-Issue**: If you were working on a GitHub sub-issue, close it using the GitHub CLI (`gh issue close <issue-number>`) at the end of your implementation run.
-3. **Draft PR**: If this is the final sub-issue or if you are ready for a code review, push your branch and open a Draft Pull Request. Ensure the PR description says `Closes #<PRD_NUMBER>` so the parent PRD closes when merged.
+3. **Push Commits**: Push your branch to remote. If you are working on `master`, simply push. If you are on an agent branch, you may merge it to `master` and push if the milestone is complete.
+4. **Draft PR (Optional)**: Only open a Pull Request if the user explicitly requested a code review or a PR. If just commits are enough, do not create a PR. If the final sub-issue of a PRD is completed, manually close the parent PRD.
