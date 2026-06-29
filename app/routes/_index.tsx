@@ -81,7 +81,7 @@ export default function Index() {
             <p className="text-xs font-medium opacity-60 uppercase tracking-widest text-center md:text-left">
               Original Image
             </p>
-            <div className="w-full h-full p-8 flex items-center justify-center bg-[var(--color-surface-raised)] rounded-lg border border-[var(--color-border)]">
+            <div className="w-full h-full p-8 flex items-center justify-center bg-white rounded-lg border border-[var(--color-border)]">
               <img
                 src={objectUrl}
                 alt="Original"
@@ -101,7 +101,7 @@ export default function Index() {
                 </div>
               )}
               <div
-                className="w-full h-full p-8 flex items-center justify-center bg-[var(--color-surface-raised)] [&>svg]:w-full [&>svg]:max-w-xs [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent"
+                className="w-full h-full p-8 flex items-center justify-center bg-white [&>svg]:w-full [&>svg]:max-w-xs [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent"
                 dangerouslySetInnerHTML={{ __html: svgResult ?? "" }}
               />
             </div>

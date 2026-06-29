@@ -12,6 +12,7 @@ export type ConvertParams = {
   turnPolicy: TurnPolicy
   color: string
   background: string
+  isBgTransparent: boolean
 }
 
 export const defaultParams: ConvertParams = {
@@ -24,4 +25,5 @@ export const defaultParams: ConvertParams = {
   turnPolicy: "minority",
   color: "#000000",
   background: "#ffffff",
+  isBgTransparent: false,
 }
