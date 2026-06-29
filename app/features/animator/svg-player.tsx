@@ -53,6 +53,11 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
       alternate: direction === "alternate",
       loop: loop,
       autoplay: true,
+      onComplete: (anim) => {
+        // Fallback for Anime.js V4 loop bug: manually restart if loop is true
+        // and the animation somehow finished instead of looping infinitely.
+        if (loop) anim.restart()
+      },
     })
 
     return () => {
@@ -142,7 +147,7 @@ const animation = animate(drawables, {
 
             <div className="flex flex-col gap-1">
               <div className="flex justify-between text-xs opacity-60">
-                <label htmlFor="delay">Delay (ms)</label>
+                <label htmlFor="delay">Path Stagger (ms)</label>
                 <span>{delay}</span>
               </div>
               <input
@@ -155,6 +160,9 @@ const animation = animate(drawables, {
                 onChange={(e) => setDelay(Number(e.target.value))}
                 className="w-full accent-[var(--color-accent)]"
               />
+              <span className="text-[10px] opacity-40 leading-tight">
+                Delays the start of subsequent paths. Noticeable only on images with multiple paths.
+              </span>
             </div>
 
             <div className="flex flex-col gap-1">
