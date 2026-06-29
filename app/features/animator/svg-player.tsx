@@ -119,9 +119,6 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
             dangerouslySetInnerHTML={{ __html: svgString }}
           />
         </div>
-        <span className="text-[10px] opacity-40 leading-tight">
-          Note: Background is set to white to ensure the SVG is always visible.
-        </span>
       </div>
 
       <div className="w-full flex flex-col md:flex-row gap-8">
