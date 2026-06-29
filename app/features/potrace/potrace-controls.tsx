@@ -138,35 +138,7 @@ export function PotraceControls({ params, setParam }: PotraceControlsProps) {
         </summary>
 
         <div className="flex flex-col gap-4 mt-4">
-          <SliderField
-            id="turd-size"
-            label="Turd Size (speckle removal)"
-            min={0}
-            max={10}
-            step={1}
-            value={params.turdSize}
-            onChange={(v) => setParam("turdSize", v)}
-          />
-          <SliderField
-            id="alpha-max"
-            label="Alpha Max (corner rounding)"
-            min={0}
-            max={1.3334}
-            step={0.01}
-            value={params.alphaMax}
-            onChange={(v) => setParam("alphaMax", v)}
-          />
-          <SliderField
-            id="opt-tolerance"
-            label="Opt Tolerance (curve smoothing)"
-            min={0}
-            max={1}
-            step={0.01}
-            value={params.optTolerance}
-            onChange={(v) => setParam("optTolerance", v)}
-          />
-
-          <div className="border-t border-[var(--color-border)] pt-3 flex flex-col gap-3">
+          <div className="flex flex-col gap-3">
             <ToggleField
               id="black-on-white"
               label="Black on White"
