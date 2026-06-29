@@ -25,7 +25,7 @@ export function SliderField({ id, label, min, max, step, value, onChange }: Slid
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-[var(--color-accent)] border-none outline-none"
+        className="w-full accent-[var(--color-accent)] border-none outline-none bg-transparent"
       />
     </div>
   )
