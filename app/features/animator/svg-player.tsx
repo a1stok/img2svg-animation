@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 
 export type SvgPlayerProps = {
   svgString: string
@@ -11,14 +11,38 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
   const [direction, setDirection] = useState("normal")
   const [loop, setLoop] = useState(false)
 
-  const config = {
-    svgLength: svgString.length,
-    duration,
-    delay,
-    easing,
-    direction,
-    loop,
-  }
+  // Parse the SVG string to extract path information
+  const pathCount = useMemo(() => {
+    if (!svgString) return 0
+    try {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(svgString, "image/svg+xml")
+      return doc.querySelectorAll("path").length
+    } catch {
+      return 0
+    }
+  }, [svgString])
+
+  // Generate the Anime.js V4 executable code snippet
+  const generatedCode = `
+import anime, { svg } from "animejs";
+
+// Extracted ${pathCount} paths from the uploaded image
+const paths = document.querySelectorAll(".svg-container path");
+const drawables = Array.from(paths).map(path => svg.createDrawable(path));
+
+// Initialize line drawing animation
+const animation = anime({
+  targets: drawables,
+  draw: ['0 0', '0 1'],
+  duration: ${duration},
+  delay: ${delay > 0 ? `anime.stagger(${delay})` : 0},
+  easing: "${easing}",
+  direction: "${direction}",
+  loop: ${loop},
+  autoplay: true,
+});
+`.trim()
 
   return (
     <div className="w-full flex flex-col md:flex-row gap-8">
@@ -104,11 +128,11 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
         </label>
       </div>
 
-      {/* JSON Output */}
+      {/* Code Output */}
       <div className="w-full md:w-1/2 flex flex-col gap-4">
-        <h3 className="text-lg font-semibold">Generated Config</h3>
+        <h3 className="text-lg font-semibold">Generated Config (Anime.js V4)</h3>
         <pre className="p-4 bg-zinc-900 text-zinc-100 rounded-lg overflow-x-auto text-xs h-full">
-          {JSON.stringify(config, null, 2)}
+          <code>{generatedCode}</code>
         </pre>
       </div>
     </div>
