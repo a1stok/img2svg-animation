@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { animate, svg } from "animejs"
 import tracedSvgStr from "../../assets/traced-graphic.svg?raw"
 
