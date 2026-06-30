@@ -1,37 +1,36 @@
 ## Problem Statement
 
-The user needs a way to take the generated black-and-white SVG (from the previous milestone) and prepare it for an animated line-drawing effect. They also need a way to configure the animation parameters (duration, delay, easing, looping, etc.) and inspect the generated animation configuration before actually playing it back.
+The application's initial UI was functional but lacked modern polish and wow-factor. It featured a generic hero section and a plain uploader, which didn't communicate the creative, animation-focused nature of the tool. Additionally, the standalone SVG export lacked convenient download options.
 
 ## Solution
 
-Wire the `SvgPlayer` component into the index page to receive the SVG string. Create a configuration panel in the UI that exposes Anime.js V4 parameters (such as `duration`, `delay`, `easing`, `direction`, `loop`, and `autoplay`). Parse the SVG paths to prepare them for the `stroke-dashoffset` animation. Finally, display the generated animation configuration as an inspectable code block or JSON snippet, fulfilling the goals of Milestone 3.
+Revamp the landing page to feature a deep "Midnight Blue" aesthetic with "Electric Blue" accents. Implement a highly stylized, live-dithered background inside the upload zone featuring a looping ink video. Add a large, subtle background animation of traced paths to demonstrate the app's core capability immediately. Improve the export options by adding one-click copy and download buttons.
 
 ## User Stories
 
-1. As a user, I want the SVG output from the image converter to automatically feed into the animation preparation step.
-2. As a user, I want a configuration panel to adjust animation settings like duration, delay, easing, and looping.
-3. As a user, I want the app to parse the SVG paths and compute the necessary Anime.js V4 parameters.
-4. As a user, I want to inspect the generated Anime.js configuration (or code) before initiating playback.
+1. As a user, I want to see a sleek, modern UI with a dark theme so the app feels premium.
+2. As a user, I want the uploader to be visually interesting and clearly indicate drag-and-drop capability.
+3. As a user, I want to see an example of the SVG animation capabilities on the landing page before I upload anything.
+4. As a user, I want to easily copy the generated SVG code to my clipboard.
+5. As a user, I want to download the raw SVG file directly.
+6. As a user, I want to download a standalone HTML file containing the Anime.js animation.
 
 ## Implementation Decisions
 
-- **Anime.js V4:** We will utilize the newly upgraded Anime.js V4 configuration structure.
-- **Component Changes:** Update `app/features/animator/SvgPlayer.tsx` to accept the SVG string as a prop.
-- **State Management:** Introduce React state for the animation settings (e.g., `duration` (number), `delay` (number), `easing` (string), `loop` (boolean/number), `direction` (string)).
-- **Configuration Panel:** Build a UI panel alongside the SVG preview containing form controls (inputs, sliders, selects) for the animation settings.
-- **Configuration Output:** Render the finalized animation configuration (combining the user's settings and the SVG path targets) inside a formatted `<pre>` or code block. Playback itself is deferred to Milestone 4.
+- **Color Palette**: Replaced the default palette with Deep Midnight (`#05070A`) and Electric Blue (`#3B82F6`).
+- **Dither Background**: Integrated Cult UI's CSS-only Bayer matrix dither effect (`DitherImageFrame`) into the `ImageUploader` component.
+- **Background Video**: Used a looping `ink-vid.mp4` paused at 15 seconds as the source for the dither effect to create a dynamic, grungy texture.
+- **Background Animation**: Added a `BackgroundAnimation` component using Anime.js and a raw SVG string to draw a large background graphic on page load.
+- **Export Buttons**: Added "Copy SVG", "Download SVG", and "Download Animation (HTML)" to the `SvgPlayer`.
+- **FOUC Fix**: Implemented a transition-opacity fade-in on SVGs to prevent a Flash of Unstyled Content before Anime.js initializes the `stroke-dasharray`.
 
 ## Testing Decisions
 
-- **UI Tests:** Verify that the configuration panel correctly updates the state.
-- **Component Tests:** Ensure `SvgPlayer` correctly parses an incoming SVG string and outputs the expected configuration data structure without crashing.
+- Verify that the dither background renders correctly across browsers (relies on CSS filters and `::after`).
+- Ensure the SVG download produces a valid XML file.
+- Ensure the HTML export includes the embedded Anime.js script and executes independently without bundlers.
 
 ## Out of Scope
 
-- Actual animation playback (this is explicitly reserved for Milestone 4).
-- Advanced SVG morphing (`svg.morphTo`) or motion paths (`svg.createMotionPath`) are not required for this base draw-on effect.
-- Complex state management libraries (Redux, Zustand) - local React state is sufficient for this milestone.
-
-## Further Notes
-
-- The Anime.js V4 `svg.createDrawable` method will eventually be used in Milestone 4, but for Milestone 3, we simply need to structure the parameters that will be fed into it.
+- Backend processing for video generation.
+- Support for uploading video files for tracing.
