@@ -4,7 +4,6 @@ import tracedSvgStr from "../../assets/traced-graphic.svg?raw"
 
 export function BackgroundAnimation() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -41,8 +40,6 @@ export function BackgroundAnimation() {
       autoplay: true,
     })
 
-    requestAnimationFrame(() => setIsReady(true))
-
     return () => {
       animation.pause()
     }
@@ -50,7 +47,7 @@ export function BackgroundAnimation() {
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 w-full flex justify-center items-end pointer-events-none -z-10 transition-opacity duration-1000 ${isReady ? "opacity-100" : "opacity-0"}`}
+      className="fixed bottom-0 left-0 right-0 w-full flex justify-center items-end pointer-events-none -z-10"
       ref={containerRef}
       dangerouslySetInnerHTML={{ __html: tracedSvgStr }}
     />

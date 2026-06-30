@@ -15,12 +15,6 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
 
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<any>(null)
-  const [isReady, setIsReady] = useState(false)
-
-  // Reset readiness when svg changes so it flashes hidden instead of fully drawn
-  useEffect(() => {
-    setIsReady(false)
-  }, [svgString])
 
   // Parse the SVG string to extract path information
   const pathCount = useMemo(() => {
@@ -64,9 +58,6 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
     if (direction === "reverse") {
       animationRef.current.reverse()
     }
-
-    // Set ready after a tiny tick to ensure anime has hidden the paths
-    requestAnimationFrame(() => setIsReady(true))
 
     return () => {
       if (animationRef.current) {
@@ -191,7 +182,7 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
         <div className="w-full h-full flex items-center justify-center">
           <div
             ref={containerRef}
-            className={`w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-white [&>svg]:p-8 [&_path]:fill-transparent [&_path]:stroke-[1px] transition-opacity duration-300 ${isReady ? "opacity-100" : "opacity-0"}`}
+            className="w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-white [&>svg]:p-8 [&_path]:fill-transparent [&_path]:stroke-[1px]"
             dangerouslySetInnerHTML={{ __html: svgString }}
           />
         </div>
