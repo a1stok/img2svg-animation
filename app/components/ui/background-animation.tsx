@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { animate, svg } from "animejs"
 import tracedSvgStr from "../../assets/traced-graphic.svg?raw"
 
 export function BackgroundAnimation() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -18,14 +19,7 @@ export function BackgroundAnimation() {
     }
 
     if (svgEl) {
-      svgEl.classList.add(
-        "w-full",
-        "h-auto",
-        "max-w-6xl",
-        "opacity-0",
-        "transition-opacity",
-        "duration-[2000ms]",
-      )
+      svgEl.classList.add("w-full", "h-auto", "max-w-6xl", "opacity-30")
       svgEl.style.maxHeight = "50vh" // Bigger, but still constrained to viewport
     }
 
@@ -47,12 +41,7 @@ export function BackgroundAnimation() {
       autoplay: true,
     })
 
-    if (svgEl) {
-      requestAnimationFrame(() => {
-        svgEl.classList.remove("opacity-0")
-        svgEl.classList.add("opacity-30")
-      })
-    }
+    requestAnimationFrame(() => setIsReady(true))
 
     return () => {
       animation.pause()
@@ -61,7 +50,7 @@ export function BackgroundAnimation() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 w-full flex justify-center items-end pointer-events-none -z-10"
+      className={`fixed bottom-0 left-0 right-0 w-full flex justify-center items-end pointer-events-none -z-10 transition-opacity duration-1000 ${isReady ? "opacity-100" : "opacity-0"}`}
       ref={containerRef}
       dangerouslySetInnerHTML={{ __html: tracedSvgStr }}
     />
