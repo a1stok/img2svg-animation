@@ -2,6 +2,8 @@
 
 this project converts uploaded images into black-and-white svgs and prepares them for an animated line-drawing effect using anime.js v4.
 
+use it at https://img2svg-animation.vercel.app/
+
 ## how to use
 
 - open the app in your browser
