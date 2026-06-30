@@ -49,20 +49,24 @@ export default function Index() {
   }
 
   return (
-    <div className="flex flex-col items-center py-12 px-4 gap-12 w-full max-w-4xl mx-auto">
+    <div className="flex flex-col items-center py-8 px-4 gap-8 w-full max-w-4xl mx-auto">
       <header className="text-center flex flex-col gap-2 pt-4">
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">SVG Animator</h1>
-        <p className="text-sm text-[var(--color-text-muted)] max-w-md mx-auto">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">SVG Animator</h1>
+        <p className="text-xs text-[var(--color-text-muted)] max-w-sm mx-auto">
           Upload any image to trace it into precise SVG paths and generate a custom drawing
           animation.
         </p>
       </header>
 
-      <ImageUploader onFileSelected={handleFileSelected} error={null} />
+      <ImageUploader
+        onFileSelected={handleFileSelected}
+        error={null}
+        isMinimized={selectedFile !== null}
+      />
 
       {selectedFile === null && (
         <>
-          <p className="text-center text-sm text-[var(--color-text-muted)] max-w-md mx-auto -mt-6 relative z-10">
+          <p className="text-center text-[10px] sm:text-[11px] text-[var(--color-text-muted)] max-w-sm mx-auto -mt-4 mb-[45vh] relative z-10">
             <span className="font-semibold text-[var(--color-text)]">Tip:</span> Simple graphics and
             cartoon images trace into cleaner animation paths than detailed photos.
           </p>

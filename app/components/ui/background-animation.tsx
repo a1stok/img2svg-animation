@@ -28,7 +28,7 @@ export function BackgroundAnimation() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 w-full flex justify-center items-end pointer-events-none -z-10 [&>svg]:w-full [&>svg]:h-auto [&>svg]:max-w-6xl [&>svg]:max-h-[50vh] [&>svg]:opacity-30 [&_rect]:hidden [&_path]:fill-transparent [&_path]:stroke-[var(--color-text)] [&_path]:stroke-[2px]"
+      className="fixed bottom-0 left-0 right-0 w-full flex justify-center items-end pointer-events-none -z-10 [&>svg]:w-full [&>svg]:h-auto [&>svg]:max-w-6xl [&>svg]:max-h-[48vh] [&>svg]:opacity-30 [&_rect]:hidden [&_path]:fill-transparent [&_path]:stroke-[var(--color-text)] [&_path]:stroke-[2px]"
       ref={containerRef}
       dangerouslySetInnerHTML={{ __html: tracedSvgStr }}
     />
