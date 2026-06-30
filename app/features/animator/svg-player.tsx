@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from "react"
 import { animate, svg, stagger } from "animejs"
+import { toast } from "sonner"
 
 export type SvgPlayerProps = {
   svgString: string
@@ -54,6 +55,13 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
       autoplay: true,
     })
 
+    const svgEl = containerRef.current.querySelector("svg")
+    if (svgEl) {
+      requestAnimationFrame(() => {
+        svgEl.style.opacity = "1"
+      })
+    }
+
     if (direction === "reverse") {
       animationRef.current.reverse()
     }
@@ -106,17 +114,87 @@ const animation = animate(drawables, {
 ${direction === "reverse" ? `\nanimation.reverse();` : ""}
 `.trim()
 
+  function handleCopySVG() {
+    navigator.clipboard.writeText(svgString)
+    toast.success("SVG copied to clipboard!")
+  }
+
+  function handleDownloadSVG() {
+    const blob = new Blob([svgString], { type: "image/svg+xml" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "traced-graphic.svg"
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  function handleDownloadAnimation() {
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Animation</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #05070a;
+    }
+    .svg-container {
+      width: 100%;
+      max-width: 600px;
+      padding: 2rem;
+    }
+    .svg-container svg {
+      width: 100%;
+      height: auto;
+    }
+    .svg-container path {
+      fill: transparent;
+      stroke-width: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="svg-container">
+    ${svgString}
+  </div>
+
+  <script type="module">
+${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0";')}
+  </script>
+</body>
+</html>`
+
+    const blob = new Blob([htmlContent], { type: "text/html" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "animation.html"
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const processedSvgString = useMemo(() => {
+    return svgString.replace("<svg", '<svg style="opacity: 0; transition: opacity 0.3s ease-in;"')
+  }, [svgString])
+
   return (
     <div className="w-full flex flex-col gap-12">
       <div className="w-full flex flex-col gap-2 items-center">
         <p className="text-xs font-medium opacity-60 uppercase tracking-widest text-center">
           Animation Preview
         </p>
-        <div className="w-full h-full p-8 flex items-center justify-center bg-white rounded-lg border border-[var(--color-border)]">
+        <div className="w-full h-full flex items-center justify-center">
           <div
             ref={containerRef}
-            className="w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-transparent [&_path]:fill-transparent [&_path]:stroke-[1px]"
-            dangerouslySetInnerHTML={{ __html: svgString }}
+            className="w-full max-w-md [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl [&>svg]:shadow-xl [&>svg]:bg-white [&>svg]:p-8 [&_path]:fill-transparent [&_path]:stroke-[1px]"
+            dangerouslySetInnerHTML={{ __html: processedSvgString }}
           />
         </div>
       </div>
@@ -230,6 +308,32 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
                 className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
               >
                 Restart
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <h3 className="text-sm font-semibold opacity-80 uppercase tracking-wider">
+              Export Options
+            </h3>
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={handleCopySVG}
+                className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
+              >
+                Copy SVG
+              </button>
+              <button
+                onClick={handleDownloadSVG}
+                className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
+              >
+                Download SVG
+              </button>
+              <button
+                onClick={handleDownloadAnimation}
+                className="px-4 py-2 bg-[var(--color-accent)] text-white rounded font-medium text-sm hover:opacity-90 transition-opacity shadow-lg shadow-[var(--color-accent)]/20"
+              >
+                Download Animation (HTML)
               </button>
             </div>
           </div>
