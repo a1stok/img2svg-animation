@@ -12,6 +12,7 @@ import {
 } from "../../components/ui/select"
 import { animate, svg, stagger } from "animejs"
 import { toast } from "sonner"
+import { Copy } from "lucide-react"
 
 export type SvgPlayerProps = {
   svgString: string
@@ -415,9 +416,23 @@ ${generatedJS.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0";'
             </ol>
           </div>
 
-          <pre className="p-4 bg-[var(--color-surface-raised)] text-[var(--color-text)] rounded-lg overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] text-xs h-full flex-1">
-            <code>{displayCode}</code>
-          </pre>
+          <div className="relative h-full flex-1 flex flex-col mt-4 md:mt-0">
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-2 right-2 h-7 w-7 bg-[var(--color-surface)] hover:bg-[var(--color-surface-raised)] border-white/10"
+              onClick={() => {
+                navigator.clipboard.writeText(displayCode)
+                toast.success("Animation code copied!")
+              }}
+              title="Copy Animation Code"
+            >
+              <Copy className="h-3.5 w-3.5" />
+            </Button>
+            <pre className="p-4 pt-10 bg-[var(--color-surface-raised)] text-[var(--color-text)] rounded-lg overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] text-xs h-full flex-1">
+              <code>{displayCode}</code>
+            </pre>
+          </div>
         </div>
       </div>
     </div>
