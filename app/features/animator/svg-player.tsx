@@ -23,6 +23,8 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
   const [easing, setEasing] = useState("inOutSine")
   const [direction, setDirection] = useState("normal")
   const [loop, setLoop] = useState(false)
+  const [strokeWidth, setStrokeWidth] = useState(1)
+  const [fadeInFill, setFadeInFill] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<any>(null)
@@ -51,8 +53,16 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
     if (paths.length === 0) return
 
     paths.forEach((path) => {
-      const fill = path.getAttribute("fill") || "currentColor"
+      const fill = path.getAttribute("fill") || "#000000"
       path.setAttribute("stroke", fill)
+      path.style.strokeWidth = `${strokeWidth}px`
+      if (fadeInFill) {
+        path.style.fill = fill
+        path.style.fillOpacity = "0"
+      } else {
+        path.style.fill = "transparent"
+        path.style.fillOpacity = "1"
+      }
     })
 
     const drawables = svg.createDrawable(paths)
@@ -77,21 +87,33 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
       animationRef.current.reverse()
     }
 
+    let fillAnimation: any = null
+    if (fadeInFill) {
+      fillAnimation = animate(paths, {
+        fillOpacity: [0, 1],
+        duration: 1000,
+        delay: duration + paths.length * delay,
+        ease: "linear",
+        loop: loop,
+        autoplay: !isNewSvg,
+      })
+    }
+
     let timerId: ReturnType<typeof setTimeout>
     if (isNewSvg) {
       // Delay the initial playback to allow the layout enter animations (0.7s) to finish
       timerId = setTimeout(() => {
         animationRef.current?.play()
+        if (fillAnimation) fillAnimation.play()
       }, 800)
     }
 
     return () => {
       if (timerId) clearTimeout(timerId)
-      if (animationRef.current) {
-        animationRef.current.pause()
-      }
+      if (animationRef.current) animationRef.current.pause()
+      if (fillAnimation) fillAnimation.pause()
     }
-  }, [svgString, duration, delay, easing, direction, loop])
+  }, [svgString, duration, delay, easing, direction, loop, strokeWidth, fadeInFill])
 
   function handlePlay() {
     animationRef.current?.play()
@@ -106,18 +128,23 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
   }
 
   // Generate the Anime.js V4 executable code snippet
-  const generatedCode = `
+  const generatedCSS = `/* --- Required CSS --- */
+.svg-container path {
+  ${fadeInFill ? "fill-opacity: 0;" : "fill: transparent;"}
+  stroke-width: ${strokeWidth}px;
+}`
+
+  const generatedJS = `/* --- Animation code --- */
 import { animate, svg, stagger } from "animejs";
 
 // Extracted ${pathCount} paths from the uploaded image
 const paths = document.querySelectorAll(".svg-container path");
 
-// For line drawing, Anime.js animates the stroke. 
-// We copy the path's fill color to its stroke color, 
-// and in CSS we set the fill to transparent.
+// Copy the path's fill color to its stroke color
 paths.forEach(path => {
-  const fill = path.getAttribute("fill") || "currentColor";
+  const fill = path.getAttribute("fill") || "#000000";
   path.setAttribute("stroke", fill);
+  ${fadeInFill ? `path.setAttribute("fill", fill);\n  path.style.fillOpacity = "0";` : `// Fill hidden via CSS`}
 });
 
 const drawables = Array.from(paths).map(path => svg.createDrawable(path));
@@ -131,8 +158,24 @@ const animation = animate(drawables, {
   loop: ${loop},
   autoplay: true,
 });
-${direction === "reverse" ? `\nanimation.reverse();` : ""}
+${
+  fadeInFill
+    ? `
+// Fade in original fill opacity after drawing completes
+animate(paths, {
+  fillOpacity: [0, 1],
+  duration: 1000,
+  delay: ${duration} + ${delay > 0 ? `(${pathCount} * ${delay})` : 0},
+  ease: "linear",
+  loop: ${loop},
+  autoplay: true,
+});
+`
+    : ""
+}${direction === "reverse" ? `\nanimation.reverse();` : ""}
 `.trim()
+
+  const displayCode = `${generatedCSS}\n\n${generatedJS}`
 
   function handleCopySVG() {
     navigator.clipboard.writeText(svgString)
@@ -174,10 +217,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
       width: 100%;
       height: auto;
     }
-    .svg-container path {
-      fill: transparent;
-      stroke-width: 1px;
-    }
+    ${generatedCSS.replace("/* --- Required CSS --- */\n", "").replace(/\n/g, "\n    ")}
   </style>
 </head>
 <body>
@@ -186,7 +226,7 @@ ${direction === "reverse" ? `\nanimation.reverse();` : ""}
   </div>
 
   <script type="module">
-${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0";')}
+${generatedJS.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0";')}
   </script>
 </body>
 </html>`
@@ -217,7 +257,7 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
 
       <div className="w-full flex flex-col md:flex-row gap-8">
         {/* Controls Panel */}
-        <div className="w-full md:w-1/2 flex flex-col gap-6">
+        <div className="w-full md:w-1/2 flex flex-col gap-6 justify-between">
           <div className="flex flex-col gap-4">
             <h3 className="text-lg font-semibold">Animation Settings</h3>
 
@@ -233,6 +273,21 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
                 step={100}
                 value={[duration]}
                 onValueChange={(vals) => setDuration(vals[0] as number)}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between text-xs opacity-80">
+                <Label htmlFor="strokeWidth">Stroke Width (px)</Label>
+                <span>{strokeWidth}</span>
+              </div>
+              <Slider
+                id="strokeWidth"
+                min={1}
+                max={10}
+                step={1}
+                value={[strokeWidth]}
+                onValueChange={(vals) => setStrokeWidth(vals[0] as number)}
               />
             </div>
 
@@ -283,11 +338,19 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
               </Select>
             </div>
 
-            <div className="flex items-center justify-between gap-4 mt-2">
-              <Label htmlFor="loop-anim" className="cursor-pointer">
-                Loop Animation
-              </Label>
-              <Switch id="loop-anim" checked={loop} onCheckedChange={setLoop} />
+            <div className="flex flex-col gap-2 mt-2">
+              <div className="flex items-center justify-between gap-4">
+                <Label htmlFor="loop-anim" className="cursor-pointer">
+                  Loop Animation
+                </Label>
+                <Switch id="loop-anim" checked={loop} onCheckedChange={setLoop} />
+              </div>
+              <div className="flex items-center justify-between gap-4 mt-2">
+                <Label htmlFor="fade-in-fill" className="cursor-pointer">
+                  Fade In Fill (after draw)
+                </Label>
+                <Switch id="fade-in-fill" checked={fadeInFill} onCheckedChange={setFadeInFill} />
+              </div>
             </div>
           </div>
 
@@ -324,9 +387,36 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
 
         {/* Code Output */}
         <div className="w-full md:w-1/2 flex flex-col gap-4">
-          <h3 className="text-lg font-semibold">Generated Config (Anime.js V4)</h3>
-          <pre className="p-4 bg-[var(--color-surface-raised)] text-[var(--color-text)] rounded-lg overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] text-xs h-full">
-            <code>{generatedCode}</code>
+          <h3 className="text-lg font-semibold">Integration Guide</h3>
+
+          <div className="flex flex-col gap-3 text-xs sm:text-sm text-[var(--color-text)] bg-[var(--color-surface-raised)] p-5 rounded-lg border border-white/5">
+            <h4 className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-[var(--color-text)] opacity-80 mb-1">
+              How to use this code:
+            </h4>
+            <ol className="list-decimal list-outside ml-4 flex flex-col gap-3 opacity-90">
+              <li>
+                <strong>Install Anime.js (V4):</strong> Run{" "}
+                <code className="bg-black/30 text-[var(--color-text)] px-1.5 py-0.5 rounded text-xs">
+                  npm install animejs
+                </code>
+              </li>
+              <li>
+                <strong>Add the SVG:</strong> Click "Copy SVG", paste it into your HTML, and wrap it
+                in a{" "}
+                <code className="bg-black/30 text-[var(--color-text)] px-1.5 py-0.5 rounded text-xs">
+                  &lt;div class="svg-container"&gt;
+                </code>
+                .
+              </li>
+              <li>
+                <strong>Customize & Apply:</strong> The code below updates automatically. Copy and
+                add the CSS and JS to your project.
+              </li>
+            </ol>
+          </div>
+
+          <pre className="p-4 bg-[var(--color-surface-raised)] text-[var(--color-text)] rounded-lg overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] text-xs h-full flex-1">
+            <code>{displayCode}</code>
           </pre>
         </div>
       </div>
