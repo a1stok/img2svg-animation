@@ -3,6 +3,8 @@ import { Toaster } from "sonner"
 import type { Route } from "./+types/root"
 import "./app.css"
 import { GrainOverlay } from "./components/ui/grain-overlay"
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -28,6 +30,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ScrollRestoration />
         <Scripts />
         <Toaster theme="dark" position="bottom-right" />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
