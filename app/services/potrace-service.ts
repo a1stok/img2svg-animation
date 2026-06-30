@@ -1,31 +1,11 @@
 // Potrace service: preprocesses an image with sharp and converts it to an SVG string.
 // Called exclusively from the api.convert route on the server.
 
-export type TurnPolicy = "minority" | "majority" | "black" | "white" | "left" | "right"
+import { defaultParams, type ConvertParams, type TurnPolicy } from "../features/potrace/types"
 
-export type PotraceParams = {
-  threshold: number
-  turdSize: number
-  alphaMax: number
-  optTolerance: number
-  optCurve: boolean
-  turnPolicy: TurnPolicy
-  blackOnWhite: boolean
-  color: string
-  background: string
-}
-
-export const defaultPotraceParams: PotraceParams = {
-  threshold: 120,
-  turdSize: 2,
-  alphaMax: 1,
-  optTolerance: 0.2,
-  optCurve: true,
-  turnPolicy: "minority",
-  blackOnWhite: true,
-  color: "auto",
-  background: "transparent",
-}
+export type { TurnPolicy }
+export type PotraceParams = ConvertParams
+export const defaultPotraceParams: PotraceParams = defaultParams
 
 export async function traceImageToSvg(
   imageBuffer: Buffer,

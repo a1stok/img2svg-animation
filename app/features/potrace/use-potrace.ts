@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { type ConvertParams, defaultParams } from "./types"
+import { appendConvertParamsToFormData, type ConvertParams, defaultParams } from "./types"
 
 export function usePotrace(selectedFile: File | null) {
   const [params, setParams] = useState<ConvertParams>(defaultParams)
@@ -37,17 +37,8 @@ export function usePotrace(selectedFile: File | null) {
         setIsConverting(true)
         setConvertError(null)
 
-        const formData = new FormData()
+        const formData = appendConvertParamsToFormData(new FormData(), params)
         formData.append("image", selectedFile)
-        formData.append("threshold", String(params.threshold))
-        formData.append("turdSize", String(params.turdSize))
-        formData.append("alphaMax", String(params.alphaMax))
-        formData.append("optTolerance", String(params.optTolerance))
-        formData.append("optCurve", String(params.optCurve))
-        formData.append("blackOnWhite", String(params.blackOnWhite))
-        formData.append("turnPolicy", params.turnPolicy)
-        formData.append("color", params.color)
-        formData.append("background", params.background)
 
         try {
           const response = await fetch("/api/convert", {
