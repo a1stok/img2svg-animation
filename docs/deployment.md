@@ -21,8 +21,6 @@ Vercel can host the project from the repository root.
 - Install command: `npm install`.
 - Build command: `npm run build`.
 
-Do not set the root directory to `frontend-new`. This repository does not have a nested frontend app.
-
 ## Runtime Notes
 
 - The conversion endpoint is stateless.
