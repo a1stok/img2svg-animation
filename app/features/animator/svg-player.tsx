@@ -43,7 +43,7 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
       path.setAttribute("stroke", fill)
     })
 
-    const drawables = Array.from(paths).map((path) => svg.createDrawable(path as SVGPathElement))
+    const drawables = svg.createDrawable(paths)
 
     animationRef.current = animate(drawables, {
       draw: ["0 0", "0 1"],

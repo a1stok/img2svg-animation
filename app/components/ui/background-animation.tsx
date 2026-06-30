@@ -9,32 +9,13 @@ export function BackgroundAnimation() {
     if (!containerRef.current) return
 
     const paths = containerRef.current.querySelectorAll("path")
-    const svgEl = containerRef.current.querySelector("svg")
+    if (paths.length === 0) return
 
-    // Remove the background rect so it's transparent
-    const rect = containerRef.current.querySelector("rect")
-    if (rect) {
-      rect.remove()
-    }
-
-    if (svgEl) {
-      svgEl.classList.add("w-full", "h-auto", "max-w-6xl", "opacity-30")
-      svgEl.style.maxHeight = "50vh" // Bigger, but still constrained to viewport
-    }
-
-    paths.forEach((path) => {
-      // White colour (or text color) and transparent fill
-      path.setAttribute("stroke", "var(--color-text)")
-      path.setAttribute("stroke-width", "2")
-      path.setAttribute("fill", "transparent")
-    })
-
-    const drawables = Array.from(paths).map((path) => svg.createDrawable(path))
+    const drawables = svg.createDrawable(paths)
 
     const animation = animate(drawables, {
       draw: ["0 0", "0 1"],
-      duration: 10000,
-      delay: 0,
+      duration: 15000,
       ease: "inOutSine",
       loop: false,
       autoplay: true,
@@ -47,7 +28,7 @@ export function BackgroundAnimation() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 w-full flex justify-center items-end pointer-events-none -z-10"
+      className="fixed bottom-0 left-0 right-0 w-full flex justify-center items-end pointer-events-none -z-10 [&>svg]:w-full [&>svg]:h-auto [&>svg]:max-w-6xl [&>svg]:max-h-[50vh] [&>svg]:opacity-30 [&_rect]:hidden [&_path]:fill-transparent [&_path]:stroke-[var(--color-text)] [&_path]:stroke-[2px]"
       ref={containerRef}
       dangerouslySetInnerHTML={{ __html: tracedSvgStr }}
     />
