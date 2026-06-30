@@ -1,21 +1,21 @@
 "use client"
 
 /**
- * `DitherImage` — compound figure that applies a CSS-only Bayer dither effect
+ * `DitherImage` compound figure that applies a CSS-only Bayer dither effect
  * via the `dither-plugin` Tailwind utility. Adapted for Vite/React Router
- * (uses native `<img>` instead of next/image).
+ * with a native `<img>` element instead of next/image.
  */
-import React, {
+import {
   createContext,
   forwardRef,
   useContext,
   type ComponentProps,
   type CSSProperties,
   type HTMLAttributes,
+  type ImgHTMLAttributes,
 } from "react"
 import { cn } from "../../lib/utils"
 
-/** Cell size of the underlying dither matrix */
 export type DitherSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl"
 
 const NUMERIC_SIZE_RE = /^\d+$/
@@ -52,8 +52,6 @@ interface DitherVars {
 
 const DitherImageFrameContext = createContext<{ invertOnDark: boolean } | null>(null)
 
-/* ─── Root figure ──────────────────────────────────────────────────────── */
-
 export type DitherImageProps = ComponentProps<"figure">
 
 const DitherImage = forwardRef<HTMLElement, DitherImageProps>(function DitherImage(
@@ -70,8 +68,6 @@ const DitherImage = forwardRef<HTMLElement, DitherImageProps>(function DitherIma
   )
 })
 DitherImage.displayName = "DitherImage"
-
-/* ─── Frame (the dither surface) ───────────────────────────────────────── */
 
 export interface DitherImageFrameProps extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   size?: DitherSize
@@ -139,8 +135,6 @@ const DitherImageFrame = forwardRef<HTMLDivElement, DitherImageFrameProps>(
 )
 DitherImageFrame.displayName = "DitherImageFrame"
 
-/* ─── Reveal stage ─────────────────────────────────────────────────────── */
-
 export type DitherImageRevealProps = ComponentProps<"div"> & {
   size?: number | string
 }
@@ -167,9 +161,7 @@ const DitherImageReveal = forwardRef<HTMLDivElement, DitherImageRevealProps>(
 )
 DitherImageReveal.displayName = "DitherImageReveal"
 
-/* ─── Image content (native img instead of next/image) ─────────────────── */
-
-export interface DitherImageContentProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+export interface DitherImageContentProps extends ImgHTMLAttributes<HTMLImageElement> {
   src: string
   alt: string
 }
@@ -191,8 +183,6 @@ const DitherImageContent = forwardRef<HTMLImageElement, DitherImageContentProps>
   },
 )
 DitherImageContent.displayName = "DitherImageContent"
-
-/* ─── Caption ──────────────────────────────────────────────────────────── */
 
 export type DitherImageCaptionProps = ComponentProps<"figcaption">
 

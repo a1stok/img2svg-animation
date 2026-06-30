@@ -4,6 +4,3 @@ build/
 dist/
 .env
 *.local
-
-# Reference repo — not part of this project
-course-video-manager/
