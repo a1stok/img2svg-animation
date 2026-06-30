@@ -325,7 +325,7 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
         {/* Code Output */}
         <div className="w-full md:w-1/2 flex flex-col gap-4">
           <h3 className="text-lg font-semibold">Generated Config (Anime.js V4)</h3>
-          <pre className="p-4 bg-[var(--color-surface-raised)] text-[var(--color-text)] rounded-lg overflow-x-auto text-xs h-full">
+          <pre className="p-4 bg-[var(--color-surface-raised)] text-[var(--color-text)] rounded-lg overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] text-xs h-full">
             <code>{generatedCode}</code>
           </pre>
         </div>
