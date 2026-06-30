@@ -1,36 +1,27 @@
 ## Problem Statement
 
-The application's initial UI was functional but lacked modern polish and wow-factor. It featured a generic hero section and a plain uploader, which didn't communicate the creative, animation-focused nature of the tool. Additionally, the standalone SVG export lacked convenient download options.
+The user needs a way to take the generated black-and-white SVG (from the previous milestone) and prepare it for an animated line-drawing effect. They also need a way to configure the animation parameters (duration, delay, easing, looping, etc.) and inspect the generated animation configuration before actually playing it back.
 
 ## Solution
 
-Revamp the landing page to feature a deep "Midnight Blue" aesthetic with "Electric Blue" accents. Implement a highly stylized, live-dithered background inside the upload zone featuring a looping ink video. Add a large, subtle background animation of traced paths to demonstrate the app's core capability immediately. Improve the export options by adding one-click copy and download buttons.
+Wire the `SvgPlayer` component into the index page to receive the SVG string. Create a configuration panel in the UI that exposes Anime.js V4 parameters (such as `duration`, `delay`, `easing`, `direction`, `loop`, and `autoplay`). Parse the SVG paths to prepare them for the `stroke-dashoffset` animation. Play the generated animation inside the preview. (Completed)
+
+We have also implemented a complete Tailwind v4 design system with reusable Radix primitives (`Button`, `Slider`, `Switch`, `Select`) and a cohesive "Midnight Blue" aesthetic.
 
 ## User Stories
 
-1. As a user, I want to see a sleek, modern UI with a dark theme so the app feels premium.
-2. As a user, I want the uploader to be visually interesting and clearly indicate drag-and-drop capability.
-3. As a user, I want to see an example of the SVG animation capabilities on the landing page before I upload anything.
-4. As a user, I want to easily copy the generated SVG code to my clipboard.
-5. As a user, I want to download the raw SVG file directly.
-6. As a user, I want to download a standalone HTML file containing the Anime.js animation.
+1. As a user, I want the SVG output from the image converter to automatically feed into the animation preparation step. (Done)
+2. As a user, I want a configuration panel to adjust animation settings like duration, delay, easing, and looping. (Done)
+3. As a user, I want the app to parse the SVG paths and compute the necessary Anime.js V4 parameters. (Done)
+4. As a user, I want to see the animation playback directly in the app. (Done)
 
 ## Implementation Decisions
 
-- **Color Palette**: Replaced the default palette with Deep Midnight (`#05070A`) and Electric Blue (`#3B82F6`).
-- **Dither Background**: Integrated Cult UI's CSS-only Bayer matrix dither effect (`DitherImageFrame`) into the `ImageUploader` component.
-- **Background Video**: Used a looping `ink-vid.mp4` paused at 15 seconds as the source for the dither effect to create a dynamic, grungy texture.
-- **Background Animation**: Added a `BackgroundAnimation` component using Anime.js and a raw SVG string to draw a large background graphic on page load.
-- **Export Buttons**: Added "Copy SVG", "Download SVG", and "Download Animation (HTML)" to the `SvgPlayer`.
-- **FOUC Fix**: Implemented a transition-opacity fade-in on SVGs to prevent a Flash of Unstyled Content before Anime.js initializes the `stroke-dasharray`.
+- **Anime.js V4:** Utilized Anime.js V4 configuration structure (`reversed: true` instead of `direction: 'reverse'`).
+- **Component Changes:** Updated `app/features/animator/svg-player.tsx` to handle playback and settings.
+- **UI Design System:** Replaced native HTML inputs with Radix UI components (`Select`, `Slider`, `Switch`, `Label`) for a premium look, themed via Tailwind v4 semantic tokens (`app.css`).
+- **Image Processing:** Updated `potrace-service.ts` to explicitly output a `.png()` buffer using `sharp` before sending it to `potrace`, preventing crashes on unsupported web formats like WebP.
 
-## Testing Decisions
+## Verification
 
-- Verify that the dither background renders correctly across browsers (relies on CSS filters and `::after`).
-- Ensure the SVG download produces a valid XML file.
-- Ensure the HTML export includes the embedded Anime.js script and executes independently without bundlers.
-
-## Out of Scope
-
-- Backend processing for video generation.
-- Support for uploading video files for tracing.
+- **Automated / Manual:** Playback of Animejs SVG paths verified in the browser. Radix UI component states (focus, hover) successfully mapped to Tailwind v4 tokens. Node server crash on WebP upload resolved.

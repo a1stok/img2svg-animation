@@ -46,6 +46,9 @@ export default function Index() {
     // Create object URL for preview
     if (objectUrl) URL.revokeObjectURL(objectUrl)
     setObjectUrl(URL.createObjectURL(file))
+
+    // Smoothly scroll to the top so the user isn't disoriented when the layout changes
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
   return (
@@ -58,23 +61,26 @@ export default function Index() {
         </p>
       </header>
 
-      <ImageUploader
-        onFileSelected={handleFileSelected}
-        error={null}
-        isMinimized={selectedFile !== null}
-      />
-
-      {selectedFile === null && (
-        <>
-          <p className="text-center text-[10px] sm:text-[11px] text-[var(--color-text-muted)] max-w-sm mx-auto -mt-4 mb-[45vh] relative z-10">
-            <span className="font-semibold text-[var(--color-text)]">Tip:</span> Simple graphics and
-            cartoon images trace into cleaner animation paths than detailed photos.
-          </p>
-          <BackgroundAnimation />
-        </>
-      )}
+      <ImageUploader onFileSelected={handleFileSelected} error={null} />
 
       <AnimatePresence mode="popLayout">
+        {selectedFile === null && (
+          <motion.div
+            key="initial-state"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full flex flex-col items-center"
+          >
+            <p className="text-center text-[10px] sm:text-[11px] text-[var(--color-text-muted)] max-w-sm mx-auto -mt-4 mb-[45vh] relative z-10">
+              <span className="font-semibold text-[var(--color-text)]">Tip:</span> Simple graphics
+              and cartoon images trace into cleaner animation paths than detailed photos.
+            </p>
+            <BackgroundAnimation />
+          </motion.div>
+        )}
+
         {selectedFile !== null && (
           <motion.section
             key="settings"

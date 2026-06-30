@@ -1,13 +1,12 @@
 import { useRef, useState } from "react"
-import { DitherImageFrame, DitherImageContent } from "../../components/ui/dither-image"
+import { DitherImageFrame } from "../../components/ui/dither-image"
 
 type ImageUploaderProps = {
   onFileSelected: (file: File | null, error: string | null) => void
   error: string | null
-  isMinimized?: boolean
 }
 
-export function ImageUploader({ onFileSelected, error, isMinimized = false }: ImageUploaderProps) {
+export function ImageUploader({ onFileSelected, error }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -53,8 +52,7 @@ export function ImageUploader({ onFileSelected, error, isMinimized = false }: Im
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={[
-          "relative overflow-hidden w-full rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          isMinimized ? "min-h-[80px]" : "min-h-[160px]",
+          "relative overflow-hidden w-full rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all min-h-[160px]",
           isDragging
             ? "ring-2 ring-[var(--color-accent)] scale-[1.02]"
             : "ring-2 ring-transparent hover:ring-[var(--color-accent)]/30 hover:scale-[1.01]",
@@ -94,64 +92,31 @@ export function ImageUploader({ onFileSelected, error, isMinimized = false }: Im
         <div className="absolute inset-0 z-[1] bg-gradient-to-t from-[var(--color-background)]/80 via-[var(--color-background)]/40 to-transparent pointer-events-none" />
 
         {/* Content */}
-        <div
-          className={[
-            "relative z-10 flex items-center justify-center w-full transition-all duration-500",
-            isMinimized ? "p-4 flex-row gap-4" : "p-8 flex-col gap-4 text-center",
-          ].join(" ")}
-        >
-          <div
-            className={[
-              "rounded-full bg-[var(--color-surface-raised)]/80 backdrop-blur-sm border border-[var(--color-border-light)] shadow-xl transition-all duration-500 flex items-center justify-center shrink-0",
-              isMinimized ? "w-10 h-10 p-2" : "w-14 h-14 p-4 mb-2",
-            ].join(" ")}
-          >
+        <div className="relative z-10 flex flex-col items-center gap-4 p-8 text-center">
+          <div className="p-4 rounded-full bg-[var(--color-surface-raised)]/80 backdrop-blur-sm border border-[var(--color-border-light)] shadow-xl mb-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={[
-                "text-[var(--color-text-muted)] transition-all duration-500",
-                isMinimized ? "w-5 h-5" : "w-6 h-6",
-              ].join(" ")}
+              className="text-[var(--color-text-muted)]"
             >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" x2="12" y1="3" y2="15" />
             </svg>
           </div>
-
-          <div
-            className={[
-              "flex flex-col transition-all duration-500",
-              isMinimized ? "items-start text-left" : "items-center text-center gap-4",
-            ].join(" ")}
-          >
-            <p
-              className={[
-                "font-semibold tracking-tight transition-all duration-500",
-                isMinimized ? "text-sm" : "text-base",
-              ].join(" ")}
-            >
-              {isMinimized
-                ? "Click or drag to change image"
-                : "Drag and drop an image here, or click to select"}
-            </p>
-            <div
-              className={[
-                "overflow-hidden transition-all duration-500",
-                isMinimized ? "h-0 opacity-0" : "h-auto opacity-100",
-              ].join(" ")}
-            >
-              <p className="text-xs text-[var(--color-text-muted)] bg-[var(--color-surface-sunken)]/80 backdrop-blur-sm px-3 py-1 rounded-full border border-[var(--color-border)] inline-block">
-                PNG, JPEG, WEBP — max 5 MB
-              </p>
-            </div>
-          </div>
+          <p className="text-base font-semibold tracking-tight">
+            Drag and drop an image here, or click to select
+          </p>
+          <p className="text-xs text-[var(--color-text-muted)] bg-[var(--color-surface-sunken)]/80 backdrop-blur-sm px-3 py-1 rounded-full border border-[var(--color-border)]">
+            PNG, JPEG, WEBP — max 5 MB
+          </p>
         </div>
 
         <input

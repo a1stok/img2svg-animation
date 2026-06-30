@@ -1,4 +1,15 @@
 import { useState, useMemo, useRef, useEffect } from "react"
+import { Slider } from "../../components/ui/slider"
+import { Button } from "../../components/ui/button"
+import { Label } from "../../components/ui/label"
+import { Switch } from "../../components/ui/switch"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select"
 import { animate, svg, stagger } from "animejs"
 import { toast } from "sonner"
 
@@ -15,6 +26,7 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
 
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<any>(null)
+  const lastDelayedSvgRef = useRef<string | null>(null)
 
   // Parse the SVG string to extract path information
   const pathCount = useMemo(() => {
@@ -45,21 +57,36 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
 
     const drawables = svg.createDrawable(paths)
 
+    const isNewSvg = lastDelayedSvgRef.current !== svgString
+    if (isNewSvg) {
+      lastDelayedSvgRef.current = svgString
+    }
+
     animationRef.current = animate(drawables, {
       draw: ["0 0", "0 1"],
       duration: duration,
       delay: delay > 0 ? stagger(delay) : 0,
       ease: easing,
       alternate: direction === "alternate",
+      reversed: direction === "reverse",
       loop: loop,
-      autoplay: true,
+      autoplay: !isNewSvg,
     })
 
     if (direction === "reverse") {
       animationRef.current.reverse()
     }
 
+    let timerId: ReturnType<typeof setTimeout>
+    if (isNewSvg) {
+      // Delay the initial playback to allow the layout enter animations (0.7s) to finish
+      timerId = setTimeout(() => {
+        animationRef.current?.play()
+      }, 800)
+    }
+
     return () => {
+      if (timerId) clearTimeout(timerId)
       if (animationRef.current) {
         animationRef.current.pause()
       }
@@ -194,85 +221,74 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
           <div className="flex flex-col gap-4">
             <h3 className="text-lg font-semibold">Animation Settings</h3>
 
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between text-xs opacity-60">
-                <label htmlFor="duration">Duration (ms)</label>
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between text-xs opacity-80">
+                <Label htmlFor="duration">Duration (ms)</Label>
                 <span>{duration}</span>
               </div>
-              <input
+              <Slider
                 id="duration"
-                type="range"
                 min={500}
                 max={10000}
                 step={100}
-                value={duration}
-                onChange={(e) => setDuration(Number(e.target.value))}
-                className="w-full accent-[var(--color-accent)] border-none outline-none bg-transparent"
+                value={[duration]}
+                onValueChange={(vals) => setDuration(vals[0] as number)}
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between text-xs opacity-60">
-                <label htmlFor="delay">Path Stagger (ms)</label>
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between text-xs opacity-80">
+                <Label htmlFor="delay">Path Stagger (ms)</Label>
                 <span>{delay}</span>
               </div>
-              <input
+              <Slider
                 id="delay"
-                type="range"
                 min={0}
                 max={5000}
                 step={100}
-                value={delay}
-                onChange={(e) => setDelay(Number(e.target.value))}
-                className="w-full accent-[var(--color-accent)] border-none outline-none bg-transparent"
+                value={[delay]}
+                onValueChange={(vals) => setDelay(vals[0] as number)}
               />
-              <span className="text-[10px] opacity-40 leading-tight">
+              <span className="text-xs text-muted-foreground mt-1 leading-tight">
                 Delays the start of subsequent paths. Noticeable only on images with multiple paths.
               </span>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="easing" className="text-xs opacity-60">
-                Easing
-              </label>
-              <select
-                id="easing"
-                value={easing}
-                onChange={(e) => setEasing(e.target.value)}
-                className="p-2 rounded bg-[var(--color-surface-raised)] border border-[var(--color-border)] text-sm"
-              >
-                <option value="linear">Linear</option>
-                <option value="inOutSine">Ease In Out Sine</option>
-                <option value="outExpo">Ease Out Expo</option>
-                <option value="outBounce">Bounce</option>
-              </select>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="easing">Easing</Label>
+              <Select value={easing} onValueChange={setEasing}>
+                <SelectTrigger id="easing">
+                  <SelectValue placeholder="Select easing" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="linear">Linear</SelectItem>
+                  <SelectItem value="inOutSine">Ease In Out Sine</SelectItem>
+                  <SelectItem value="outExpo">Ease Out Expo</SelectItem>
+                  <SelectItem value="outBounce">Bounce</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="direction" className="text-xs opacity-60">
-                Direction
-              </label>
-              <select
-                id="direction"
-                value={direction}
-                onChange={(e) => setDirection(e.target.value)}
-                className="p-2 rounded bg-[var(--color-surface-raised)] border border-[var(--color-border)] text-sm"
-              >
-                <option value="normal">Normal</option>
-                <option value="reverse">Reverse</option>
-                <option value="alternate">Alternate (Ping-Pong)</option>
-              </select>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="direction">Direction</Label>
+              <Select value={direction} onValueChange={setDirection}>
+                <SelectTrigger id="direction">
+                  <SelectValue placeholder="Select direction" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="normal">Normal</SelectItem>
+                  <SelectItem value="reverse">Reverse</SelectItem>
+                  <SelectItem value="alternate">Alternate (Ping-Pong)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <label className="flex items-center gap-3 cursor-pointer select-none mt-2">
-              <input
-                type="checkbox"
-                checked={loop}
-                onChange={(e) => setLoop(e.target.checked)}
-                className="w-4 h-4 accent-[var(--color-accent)]"
-              />
-              <span className="text-sm">Loop Animation</span>
-            </label>
+            <div className="flex items-center justify-between gap-4 mt-2">
+              <Label htmlFor="loop-anim" className="cursor-pointer">
+                Loop Animation
+              </Label>
+              <Switch id="loop-anim" checked={loop} onCheckedChange={setLoop} />
+            </div>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -280,24 +296,13 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
               Playback Controls
             </h3>
             <div className="flex gap-2">
-              <button
-                onClick={handlePlay}
-                className="px-4 py-2 bg-[var(--color-accent)] text-white rounded font-medium text-sm hover:opacity-90 transition-opacity"
-              >
-                Play
-              </button>
-              <button
-                onClick={handlePause}
-                className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
-              >
+              <Button onClick={handlePlay}>Play</Button>
+              <Button variant="secondary" onClick={handlePause}>
                 Pause
-              </button>
-              <button
-                onClick={handleRestart}
-                className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
-              >
+              </Button>
+              <Button variant="secondary" onClick={handleRestart}>
                 Restart
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -305,25 +310,14 @@ ${generatedCode.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0"
             <h3 className="text-sm font-semibold opacity-80 uppercase tracking-wider">
               Export Options
             </h3>
-            <div className="flex gap-2 flex-wrap">
-              <button
-                onClick={handleCopySVG}
-                className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
-              >
+            <div className="flex flex-col gap-2">
+              <Button variant="outline" onClick={handleCopySVG}>
                 Copy SVG
-              </button>
-              <button
-                onClick={handleDownloadSVG}
-                className="px-4 py-2 bg-[var(--color-surface-raised)] rounded font-medium text-sm hover:border-[var(--color-border-light)] border border-transparent transition-colors"
-              >
+              </Button>
+              <Button variant="outline" onClick={handleDownloadSVG}>
                 Download SVG
-              </button>
-              <button
-                onClick={handleDownloadAnimation}
-                className="px-4 py-2 bg-[var(--color-accent)] text-white rounded font-medium text-sm hover:opacity-90 transition-opacity shadow-lg shadow-[var(--color-accent)]/20"
-              >
-                Download Animation (HTML)
-              </button>
+              </Button>
+              <Button onClick={handleDownloadAnimation}>Download Animation (HTML)</Button>
             </div>
           </div>
         </div>

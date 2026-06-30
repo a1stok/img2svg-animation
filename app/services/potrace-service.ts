@@ -33,8 +33,8 @@ export async function traceImageToSvg(
 ): Promise<string> {
   const sharp = (await import("sharp")).default
 
-  // Preprocess: grayscale + normalize (auto-contrast) for a cleaner trace
-  const preprocessed = await sharp(imageBuffer).grayscale().normalize().toBuffer()
+  // Preprocess: grayscale + normalize (auto-contrast) for a cleaner trace, and output PNG for potrace compatibility
+  const preprocessed = await sharp(imageBuffer).grayscale().normalize().png().toBuffer()
 
   // Dynamic import keeps potrace out of the client bundle
   const potrace = await import("potrace")

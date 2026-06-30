@@ -1,4 +1,7 @@
 import type { ConvertParams } from "./types"
+import { Slider } from "../../components/ui/slider"
+import { Switch } from "../../components/ui/switch"
+import { Label } from "../../components/ui/label"
 
 type SliderFieldProps = {
   id: string
@@ -12,20 +15,18 @@ type SliderFieldProps = {
 
 export function SliderField({ id, label, min, max, step, value, onChange }: SliderFieldProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex justify-between text-xs opacity-60">
-        <label htmlFor={id}>{label}</label>
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between text-xs opacity-80">
+        <Label htmlFor={id}>{label}</Label>
         <span>{value}</span>
       </div>
-      <input
+      <Slider
         id={id}
-        type="range"
         min={min}
         max={max}
         step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-[var(--color-accent)] border-none outline-none bg-transparent"
+        value={[value]}
+        onValueChange={(vals) => onChange(vals[0] as number)}
       />
     </div>
   )
@@ -41,22 +42,15 @@ type ToggleFieldProps = {
 
 export function ToggleField({ id, label, description, checked, onChange }: ToggleFieldProps) {
   return (
-    <label
-      htmlFor={id}
-      className="flex items-center justify-between gap-4 cursor-pointer select-none"
-    >
+    <div className="flex items-center justify-between gap-4">
       <div className="flex flex-col">
-        <span className="text-xs opacity-60">{label}</span>
-        <span className="text-xs opacity-40">{description}</span>
+        <Label htmlFor={id} className="cursor-pointer">
+          {label}
+        </Label>
+        <span className="text-xs text-muted-foreground mt-1">{description}</span>
       </div>
-      <input
-        id={id}
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 accent-[var(--color-accent)]"
-      />
-    </label>
+      <Switch id={id} checked={checked} onCheckedChange={onChange} />
+    </div>
   )
 }
 
@@ -79,10 +73,8 @@ export function PotraceControls({ params, setParam }: PotraceControlsProps) {
       />
 
       <div className="border-t border-[var(--color-border)] pt-3 grid grid-cols-2 gap-3 mt-1">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="color" className="text-xs opacity-60">
-            Path Color
-          </label>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="color">Path Color</Label>
           <input
             id="color"
             type="color"
@@ -91,12 +83,8 @@ export function PotraceControls({ params, setParam }: PotraceControlsProps) {
             className="w-full h-8 rounded border-none outline-none cursor-pointer bg-transparent"
           />
         </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between items-center">
-            <label htmlFor="background" className="text-xs opacity-60">
-              Background
-            </label>
-          </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="background">Background</Label>
           <input
             id="background"
             type="color"
