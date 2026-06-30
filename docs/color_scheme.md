@@ -1,22 +1,34 @@
 # Color Scheme
 
-This project follows the **Clean Dark Aesthetic** (Ditherpunk-inspired), emphasizing absolute black backgrounds, stepped surface layers, and muted gray accents.
+The current product uses a dark GitHub-inspired blue-gray interface with a bright blue accent. `app/app.css` is the source of truth for these tokens.
 
-## Brand Colors
+## Brand and Accent
 
-- Accent Primary: `#979595` / `oklch(65% 0 0)` - Used for primary accents and borders
-- Accent Dark: `#626060` / `oklch(45% 0 0)` - Used for muted or secondary accents
+- Accent: `#3b82f6` - Primary actions, focused controls, and active conversion states.
+- Accent Dark: `#2563eb` - Stronger accent states when extra contrast is needed.
 
-## UI Colors
+## Surfaces
 
-- Background: `#000000` / `oklch(0% 0 0)` - Absolute black base layer
-- Surface (Level 1): `#0a0a0a` / `oklch(14.5% 0 0)` - Default card and panel background
-- Surface (Raised): `#111111` / `oklch(18% 0 0)` - Elevated elements
-- Surface (Hover): `#161616` / `oklch(20% 0 0)` - Interactive hover state
-- Border: `#1a1a1a` / `oklch(22% 0 0)` - Default separating borders
-- Border Light: `#222222` / `oklch(26% 0 0)` - Hover or focused borders
+- Background: `#05070a` - App canvas.
+- Surface Sunken: `#080b10` - Lowest panel layer.
+- Surface: `#0d1117` - Default panels and controls.
+- Surface Raised: `#161b22` - Raised panels, code output, and dropdown content.
+- Surface Hover: `#1c2330` - Interactive hover state.
+- Surface Light: `#21262d` - Secondary controls and input surfaces.
 
-## Text Colors
+## Borders
 
-- Text Bright: `oklch(90% 0 0)` - Primary readable text
-- Text Muted: `#979595` / `oklch(65% 0 0)` - Muted or secondary text
+- Border: `#21262d` - Default dividers and control outlines.
+- Border Light: `#30363d` - Higher-emphasis border and focus-adjacent states.
+
+## Text
+
+- Text: `#e6edf3` - Primary foreground text.
+- Text Muted: `#7d8590` - Secondary labels, helper text, and subdued metadata.
+
+## Usage Rules
+
+- Use CSS variables from `app/app.css` instead of hard-coded color values in components.
+- Reserve the blue accent for clear actions, focus, and status. Do not use it as a page-wide wash.
+- Keep previews and generated SVG content readable against white preview canvases when needed.
+- Preserve sufficient contrast for small labels and code output.

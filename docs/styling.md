@@ -1,113 +1,47 @@
-# Styling & Design Strategy (Tailwind v4)
+# Styling & Design Strategy
 
-This project strictly follows a **CSS-first design system framework** using Tailwind CSS v4.
+This project uses Tailwind CSS v4 with CSS-first theme tokens in `app/app.css`.
 
-## Core Concepts
+## Source of Truth
 
-### 1. Design Token Hierarchy
+- Define global design tokens in the `@theme` block in `app/app.css`.
+- Use the token names from `docs/color_scheme.md` for colors.
+- Do not add `tailwind.config.ts` unless a future requirement cannot be met with Tailwind v4 CSS directives.
+- Keep component styling in class names close to the component that owns the markup.
 
-All colors and values should follow this specific abstraction cascade to ensure extreme maintainability:
+## Token Hierarchy
 
-1. **Brand Tokens (abstract)**: e.g. `oklch(45% 0.2 260)`
-2. **Semantic Tokens (purpose)**: e.g. `--color-primary`
-3. **Component Tokens (specific)**: e.g. `bg-primary`
+Use this order when adding styling:
 
-### 2. Native CSS Variables & OKLCH
+1. Global CSS variables in `app/app.css`.
+2. Semantic Tailwind tokens such as `bg-background`, `text-foreground`, `bg-primary`, and `border-border`.
+3. Component classes or variants.
 
-- We use the `oklch()` color space for all defined colors due to its perceptually uniform lightness.
-- All tokens must be defined inside the `@theme` block in the main `index.css`.
-- Avoid `tailwind.config.ts` entirely. Rely on the CSS `@theme` directive.
+Prefer existing tokens over hard-coded arbitrary values. Arbitrary values are acceptable only when they bind directly to a defined CSS variable, for example `text-[var(--color-text-muted)]`, or when the value is layout-specific and not a reusable design token.
 
-### 3. Dark Mode
+## Components
 
-- We use the `@custom-variant` directive to support class-based dark mode cleanly.
-- Define dark mode overrides simply by targeting the `.dark` class and redefining the semantic CSS variables.
+- Reusable controls live in `app/components/ui`.
+- Current primitives include `Button`, `Label`, `Select`, `Slider`, and `Switch`.
+- Use Radix primitives for accessible controls when a headless primitive exists.
+- Buttons use `class-variance-authority` and `tailwind-merge` through the shared `cn` utility.
+- Keep cards and panels compact, with `rounded-lg` or smaller unless an existing component already requires more radius.
 
-## Quick Reference Setup (Example)
+## Interaction States
 
-Your `index.css` must follow this structure, explicitly grouping tokens with header comments:
+- All keyboard-focusable controls need visible focus styles.
+- Use `--color-ring` for focus rings.
+- Use `--color-surface-hover` or existing component variants for hover states.
+- Disabled states should reduce opacity and disable pointer events.
 
-```css
-@import "tailwindcss";
+## Visual Direction
 
-@theme {
-  /* --- Brand & Semantic Colors (Light Mode) --- */
-  --color-background: oklch(100% 0 0);
-  --color-foreground: oklch(14.5% 0.025 264);
-  --color-primary: oklch(14.5% 0.025 264);
-  --color-primary-foreground: oklch(98% 0.01 264);
+The app should feel like a focused creative tool, not a marketing page. Prioritize a compact workflow:
 
-  /* --- Radii & Spacing --- */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
+- Upload image.
+- Configure trace settings.
+- Compare original and traced SVG.
+- Preview animation.
+- Export SVG, code, or standalone HTML.
 
-  /* --- Animations --- */
-  --animate-fade-in: fade-in 0.2s ease-out;
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-}
-
-/* --- Dark Mode Configuration --- */
-@custom-variant dark (&:where(.dark, .dark *));
-
-.dark {
-  --color-background: oklch(14.5% 0.025 264);
-  --color-foreground: oklch(98% 0.01 264);
-  --color-primary: oklch(98% 0.01 264);
-  --color-primary-foreground: oklch(14.5% 0.025 264);
-}
-
-/* --- Base Styles --- */
-@layer base {
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
-}
-```
-
-## Component Architecture
-
-When building components, strictly follow:
-`Base styles → Variants → Sizes → States → Overrides`
-
-Use standard accessibility-first patterns with ARIA attributes and well-defined focus states utilizing the `--color-ring` and `--color-ring-offset` properties.
-
-### Standardizing Component Variants (CVA)
-
-For complex components with multiple states (like Buttons or Badges), use the `cva` (Class Variance Authority) pattern to maintain strict styling constraints rather than conditional string concatenation:
-
-```typescript
-const buttonVariants = cva(
-  // Base styles (Native CSS variables)
-  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-border bg-background hover:bg-accent hover:text-accent-foreground",
-      },
-      size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 px-3",
-        lg: "h-11 px-8",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  },
-)
-```
-
-### Compound Components
-
-For multi-part UI elements (like Cards, Dialogs, or Accordions), use the React Compound Component pattern (e.g., `<Card>`, `<CardHeader>`, `<CardContent>`) to keep APIs clean and style tokens separated logically. Since we are on React 19, standard props handle `ref` without needing `forwardRef`.
+Do not add decorative hero sections or unrelated promotional copy to the first screen.

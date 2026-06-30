@@ -1,45 +1,42 @@
 # Running the Project Locally
 
-This guide covers how to spin up the local development environment for the portfolio. The process is identical across **Windows** and **macOS**.
+This guide covers the local development workflow for the ImgToSvg Animation app.
 
 ## Prerequisites
 
-- **Node.js**: Ensure you have Node 18+ installed.
-- **npm**: Comes bundled with Node.js.
+- Node.js 18 or newer.
+- npm.
 
-## Getting Started
+## Setup
 
-1. **Navigate to the frontend directory:**
-   Open your terminal (PowerShell/CMD on Windows, Terminal on Mac) and run:
+Run commands from the repository root:
 
-   ```bash
-   cd frontend-new
-   ```
+```bash
+cd D:\imgtosvganimation
+npm install
+```
 
-2. **Install Dependencies:**
-   If this is your first time, or if `package.json` has changed, install the dependencies:
+## Development Server
 
-   ```bash
-   npm install
-   ```
+Start React Router's development server:
 
-3. **Start the Development Server:**
-   Launch Vite's hot-reloading dev server:
+```bash
+npm run dev
+```
 
-   ```bash
-   npm run dev
-   ```
+Open the localhost URL printed by the command, usually `http://localhost:5173`.
 
-4. **View the Site:**
-   Open your browser and navigate to the localhost URL provided in the terminal (usually `http://localhost:5173` or `http://localhost:5174`).
+## Verification Commands
+
+```bash
+npm run typecheck
+npm test
+npm run format:check
+npm run build
+```
 
 ## Troubleshooting
 
-- **Port in use:** If the port is taken, Vite will automatically try the next available port. Check your terminal output.
-- **Dependency Issues:** If you encounter weird React hook errors, try clearing the Vite cache and reinstalling:
-  ```bash
-  rm -rf node_modules package-lock.json # On Mac
-  Remove-Item -Recurse -Force node_modules, package-lock.json # On Windows
-  npm install
-  npm run dev -- --force
-  ```
+- If the port is already in use, React Router or Vite will print the available URL. Use the URL from the terminal.
+- If dependencies behave unexpectedly, remove `node_modules`, run `npm install`, then restart the dev server.
+- Image conversion requires the server route, so use `npm run dev` or a production build instead of opening files directly in a browser.

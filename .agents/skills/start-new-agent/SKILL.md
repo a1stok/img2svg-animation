@@ -57,5 +57,5 @@ For deep-dive technical guidelines specific to an individual skill (e.g., exact 
 
 ## Styling & Tailwind Tokens
 
-- **Centralized Tokens**: We use a strict design system with Tailwind CSS v4 (defined centrally in the main CSS file, e.g., `index.css`). **No random "slop values" or arbitrary magic numbers** are allowed. You must use the centrally defined theme tokens for colors, spacing, and typography.
-- **Reference `docs/styling.md`**: For the exact implementation details (e.g. OKLCH color spaces, dark mode setup, and token hierarchy), you MUST consult and follow the rules laid out in `docs/styling.md`.
+- **Centralized Tokens**: We use Tailwind CSS v4 tokens defined centrally in `app/app.css`. Use existing color, spacing, radius, and typography tokens before adding new values.
+- **Reference `docs/styling.md`**: For implementation details, token hierarchy, component styling rules, and the current visual direction, consult and follow `docs/styling.md`.

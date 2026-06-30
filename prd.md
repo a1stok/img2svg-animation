@@ -6,7 +6,7 @@ The user needs a way to take the generated black-and-white SVG (from the previou
 
 Wire the `SvgPlayer` component into the index page to receive the SVG string. Create a configuration panel in the UI that exposes Anime.js V4 parameters (such as `duration`, `delay`, `easing`, `direction`, `loop`, and `autoplay`). Parse the SVG paths to prepare them for the `stroke-dashoffset` animation. Play the generated animation inside the preview. (Completed)
 
-We have also implemented a complete Tailwind v4 design system with reusable Radix primitives (`Button`, `Slider`, `Switch`, `Select`) and a cohesive "Midnight Blue" aesthetic.
+We have also implemented a Tailwind v4 design system with reusable Radix primitives (`Button`, `Slider`, `Switch`, `Select`) and the current dark blue-gray tool aesthetic documented in `docs/color_scheme.md`.
 
 ## User Stories
 

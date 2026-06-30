@@ -1,25 +1,30 @@
 # Deployment Guide
 
-This project is fully optimized to be deployed on **Vercel** right out of the box, as it uses Vite for its build toolchain.
+The app is a React Router v7 project with server-side image conversion. Deployment must support Node server execution because `/api/convert` uses `sharp` and `potrace`.
 
-## Deploying to Vercel (Automatic / Recommended)
+## Build
 
-The easiest way to deploy this portfolio is to connect your GitHub repository directly to Vercel.
+Run from the repository root:
 
-1. **Push to GitHub:**
-   Ensure all your latest changes are pushed to your `main` branch.
+```bash
+npm run build
+```
 
-2. **Connect to Vercel:**
-   - Log in to your [Vercel Dashboard](https://vercel.com/dashboard).
-   - Click **Add New...** -> **Project**.
-   - Import your GitHub repository.
+The build command runs `react-router build`.
 
-3. **Configure Project Settings:**
-   Vercel will automatically detect that you are using Vite, but ensure the settings look like this:
-   - **Framework Preset**: `Vite`
-   - **Root Directory**: `frontend-new` (CRITICAL: Because the Vite project lives inside the `frontend-new` folder, you MUST set the Root Directory to `frontend-new`).
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
+## Vercel
 
-4. **Deploy:**
-   Click **Deploy**. Vercel will build the project and assign you a live URL. Every future push to `main` will automatically trigger a new deployment.
+Vercel can host the project from the repository root.
+
+- Framework preset: React Router if available, otherwise use the Vite-compatible Node setup Vercel detects.
+- Root directory: repository root.
+- Install command: `npm install`.
+- Build command: `npm run build`.
+
+Do not set the root directory to `frontend-new`. This repository does not have a nested frontend app.
+
+## Runtime Notes
+
+- The conversion endpoint is stateless.
+- Uploaded images are processed in memory and are not stored.
+- The production environment must be able to install native dependencies required by `sharp`.
