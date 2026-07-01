@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/demo-dark.gif">
-  <source media="(prefers-color-scheme: light)" srcset="docs/demo-light.gif">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/demo-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/demo-light.png">
   <img alt="img2svg-animation demo" src="docs/demo-light.gif">
 </picture>
 
