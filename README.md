@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/demo-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/demo-light.png">
-  <img alt="img2svg-animation demo" src="docs/demo-light.png">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/logo-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/logo-light.png">
+  <img alt="img2svg-animation logo" src="docs/logo-light.png">
 </picture>
 
 # image → svg animation
