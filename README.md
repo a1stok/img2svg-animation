@@ -1,28 +1,27 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/demo-dark.png">
   <source media="(prefers-color-scheme: light)" srcset="docs/demo-light.png">
-  <img alt="img2svg-animation demo" src="docs/demo-light.gif">
+  <img alt="img2svg-animation demo" src="docs/demo-light.png">
 </picture>
 
 # image → svg animation
 drop in a picture. get back line art that draws itself.
 [try it → img2svg-animation.vercel.app](https://img2svg-animation.vercel.app/)
 
-## what it does / features
+## what it does
 
 * turns any image into svg line art, in one color you choose, on a background color you choose
 * animates the lines so they draw themselves on screen, one after another
-* controls for how long it takes, delay between lines, speed style, direction (forward, backward, back and forth), looping, line thickness, and fade-in
+* trace controls (threshold, inversion, curve smoothing) and animation controls (duration, stagger, easing, direction, looping, fade-in fill)
 * export: copy the svg, download the svg, or download one html file with the svg, css, and animation code together
 
 ## how to use
 
 * open the app in your browser
 * upload an image file
-* adjust the trace settings if needed (threshold, dot/speckle cleanup, line color, background color)
-* adjust the animation settings (duration, delay, speed style, direction, looping)
-* watch the animation preview
-* copy or download the svg code, or download the html file to use in your own project
+* adjust the trace settings if needed
+* adjust the animation settings
+* watch the animation preview, then export it in whichever format you need
 
 ## why
 
