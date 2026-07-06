@@ -45,7 +45,7 @@ npm run dev
 * radix ui + tailwind v4 for the interface
 * vitest for tests, husky + lint-staged to run checks before each commit
 
-issues and prs welcome.
+issues and prs are welcome.
 
 ## license
 
