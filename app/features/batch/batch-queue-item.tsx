@@ -104,11 +104,50 @@ export function BatchQueueItem({
   }, [item.status, item.svgResult])
 
   // Generate animation HTML when previewSvg or effectiveAnim changes
+  const svgDimensions = useRef<{ width: number; height: number } | null>(null)
+
   useEffect(() => {
     if (!previewSvg) {
       setAnimationUrl(null)
       return
     }
+
+    // Extract viewBox dimensions for sizing the preview container robustly
+    try {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(previewSvg, "image/svg+xml")
+      const svgEl = doc.querySelector("svg")
+      let width = 0,
+        height = 0
+
+      if (svgEl) {
+        const viewBox = svgEl.getAttribute("viewBox")
+        if (viewBox) {
+          const parts = viewBox.trim().split(/[\s,]+/)
+          if (parts.length >= 4) {
+            width = parseFloat(parts[2])
+            height = parseFloat(parts[3])
+          }
+        }
+        if (!width || !height || isNaN(width) || isNaN(height)) {
+          const w = svgEl.getAttribute("width")
+          const h = svgEl.getAttribute("height")
+          if (w && h) {
+            width = parseFloat(w)
+            height = parseFloat(h)
+          }
+        }
+      }
+
+      if (width > 0 && height > 0) {
+        svgDimensions.current = { width, height }
+      } else {
+        svgDimensions.current = null
+      }
+    } catch (e) {
+      svgDimensions.current = null
+    }
+
     const html = generateAnimationHtml(previewSvg, effectiveAnim, true) // compact mode
     const blob = new Blob([html], { type: "text/html" })
     const url = URL.createObjectURL(blob)
@@ -313,11 +352,22 @@ export function BatchQueueItem({
                       </p>
                       <div className="flex-1 flex items-center justify-center md:justify-start overflow-hidden relative">
                         {animationUrl ? (
-                          <div className="w-full h-[240px] rounded-lg overflow-hidden shadow-sm [transform:translateZ(0)]">
+                          <div className="relative inline-block max-w-full max-h-[240px] rounded-lg overflow-hidden shadow-sm [transform:translateZ(0)]">
+                            {svgDimensions.current ? (
+                              <svg
+                                width={svgDimensions.current.width}
+                                height={svgDimensions.current.height}
+                                viewBox={`0 0 ${svgDimensions.current.width} ${svgDimensions.current.height}`}
+                                className="max-w-full max-h-[240px] w-auto h-auto opacity-0 block"
+                              />
+                            ) : (
+                              // Fallback if no viewBox could be parsed
+                              <div className="w-[320px] h-[240px] max-w-full" />
+                            )}
                             <iframe
                               src={animationUrl}
                               scrolling="no"
-                              className="w-full h-full border-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                              className="absolute inset-0 w-full h-full border-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                               title="Animation Preview"
                             />
                           </div>
