@@ -24,7 +24,11 @@ export const defaultAnimationParams: AnimationParams = {
  * action in SvgPlayer and can be used for both single-file export and
  * batch ZIP assembly.
  */
-export function generateAnimationHtml(svgString: string, params: AnimationParams): string {
+export function generateAnimationHtml(
+  svgString: string,
+  params: AnimationParams,
+  compact = false,
+): string {
   const { duration, delay, easing, direction, loop, strokeWidth, fadeInFill } = params
 
   const generatedCSS = `/* --- Required CSS --- */
@@ -92,12 +96,12 @@ animate(paths, {
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #05070a;
+      background-color: ${compact ? "transparent" : "#05070a"};
     }
     .svg-container {
       width: 100%;
       max-width: 600px;
-      padding: 2rem;
+      padding: ${compact ? "0.5rem" : "2rem"};
     }
     .svg-container svg {
       width: 100%;

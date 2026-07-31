@@ -14,6 +14,7 @@ import { Button } from "../../components/ui/button"
 import { PotraceControls } from "../potrace/potrace-controls"
 import { AnimationControls } from "./animation-controls"
 import { appendConvertParamsToFormData } from "../potrace/conversion-options"
+import { generateAnimationHtml } from "../animator/animation-params"
 import type { BatchItem } from "./types"
 import type { ConvertParams } from "../potrace/conversion-options"
 import type { AnimationParams } from "../animator/animation-params"
@@ -79,6 +80,7 @@ export function BatchQueueItem({
   // On-demand preview state
   const [isPreviewing, setIsPreviewing] = useState(false)
   const [previewSvg, setPreviewSvg] = useState<string | null>(null)
+  const [animationUrl, setAnimationUrl] = useState<string | null>(null)
 
   const effectiveTrace = item.traceOverride ?? globalTraceParams
   const effectiveAnim = item.animOverride ?? globalAnimParams
@@ -97,6 +99,19 @@ export function BatchQueueItem({
       setPreviewSvg(item.svgResult)
     }
   }, [item.status, item.svgResult])
+
+  // Generate animation HTML when previewSvg or effectiveAnim changes
+  useEffect(() => {
+    if (!previewSvg) {
+      setAnimationUrl(null)
+      return
+    }
+    const html = generateAnimationHtml(previewSvg, effectiveAnim, true) // compact mode
+    const blob = new Blob([html], { type: "text/html" })
+    const url = URL.createObjectURL(blob)
+    setAnimationUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [previewSvg, effectiveAnim])
 
   function handleToggleExpand() {
     if (!expanded && item.traceOverride === null) {
@@ -258,25 +273,33 @@ export function BatchQueueItem({
                       <p className="text-[10px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
                         Original
                       </p>
-                      <div className="flex-1 min-h-[100px] flex items-center justify-center bg-[var(--color-surface-raised)] rounded overflow-hidden">
+                      <div className="flex-1 min-h-[140px] flex items-center justify-center bg-[var(--color-surface-raised)] rounded overflow-hidden">
                         {objectUrl && (
                           <img
                             src={objectUrl}
                             alt="Original preview"
-                            className="max-w-full max-h-[120px] object-contain"
+                            className="max-w-full max-h-[160px] object-contain"
                           />
                         )}
                       </div>
                     </div>
                     <div className="flex-1 flex flex-col gap-1.5">
                       <p className="text-[10px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
-                        Trace Preview
+                        Animation Preview
                       </p>
-                      <div className="flex-1 min-h-[100px] flex items-center justify-center bg-[var(--color-surface-raised)] rounded overflow-hidden">
-                        <div
-                          className="max-w-full max-h-[120px] [&>svg]:max-w-full [&>svg]:max-h-[120px]"
-                          dangerouslySetInnerHTML={{ __html: previewSvg }}
-                        />
+                      <div className="flex-1 min-h-[140px] flex items-center justify-center bg-[var(--color-surface-raised)] rounded overflow-hidden relative">
+                        {animationUrl ? (
+                          <iframe
+                            src={animationUrl}
+                            className="w-full h-full min-h-[160px] border-0"
+                            title="Animation Preview"
+                          />
+                        ) : (
+                          <div
+                            className="max-w-full max-h-[160px] [&>svg]:max-w-full [&>svg]:max-h-[160px]"
+                            dangerouslySetInnerHTML={{ __html: previewSvg }}
+                          />
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -295,7 +318,7 @@ export function BatchQueueItem({
                         ...effectiveTrace,
                         [key]: value,
                       })
-                      if (previewSvg) setPreviewSvg(null) // Clear preview on change
+                      if (previewSvg) setPreviewSvg(null) // Clear preview on trace change, forces re-fetch
                     }}
                   />
                 </div>
@@ -306,12 +329,13 @@ export function BatchQueueItem({
                   </p>
                   <AnimationControls
                     params={effectiveAnim}
-                    setParam={(key, value) =>
+                    setParam={(key, value) => {
                       onSetAnimOverride(item.id, {
                         ...effectiveAnim,
                         [key]: value,
                       })
-                    }
+                      // Note: We don't clear previewSvg here, because the effect will automatically rebuild the animationUrl with new params!
+                    }}
                     idPrefix={`item-${item.id}`}
                   />
                 </div>
