@@ -1,12 +1,23 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ChevronDown, ChevronUp, CheckCircle, AlertCircle, Loader, Clock } from "lucide-react"
+import {
+  X,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle,
+  AlertCircle,
+  Loader,
+  Clock,
+  Play,
+} from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { PotraceControls } from "../potrace/potrace-controls"
 import { AnimationControls } from "./animation-controls"
+import { appendConvertParamsToFormData } from "../potrace/conversion-options"
 import type { BatchItem } from "./types"
 import type { ConvertParams } from "../potrace/conversion-options"
 import type { AnimationParams } from "../animator/animation-params"
+import { toast } from "sonner"
 
 type BatchQueueItemProps = {
   item: BatchItem
@@ -62,9 +73,30 @@ export function BatchQueueItem({
 }: BatchQueueItemProps) {
   const [expanded, setExpanded] = useState(false)
 
+  // Object URL for thumbnail
+  const [objectUrl, setObjectUrl] = useState<string | null>(null)
+
+  // On-demand preview state
+  const [isPreviewing, setIsPreviewing] = useState(false)
+  const [previewSvg, setPreviewSvg] = useState<string | null>(null)
+
   const effectiveTrace = item.traceOverride ?? globalTraceParams
   const effectiveAnim = item.animOverride ?? globalAnimParams
   const hasOverride = item.traceOverride !== null || item.animOverride !== null
+
+  // Generate thumbnail on mount
+  useEffect(() => {
+    const url = URL.createObjectURL(item.file)
+    setObjectUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [item.file])
+
+  // If the item finishes batch processing, we can just use its svgResult as the preview
+  useEffect(() => {
+    if (item.status === "done" && item.svgResult) {
+      setPreviewSvg(item.svgResult)
+    }
+  }, [item.status, item.svgResult])
 
   function handleToggleExpand() {
     if (!expanded && item.traceOverride === null) {
@@ -78,13 +110,54 @@ export function BatchQueueItem({
   function handleClearOverride() {
     onSetTraceOverride(item.id, null)
     onSetAnimOverride(item.id, null)
+    setPreviewSvg(null) // Reset preview since params changed back to global
     setExpanded(false)
+  }
+
+  async function handlePreviewTrace() {
+    if (isPreviewing) return
+    setIsPreviewing(true)
+    setPreviewSvg(null)
+    try {
+      const formData = new FormData()
+      formData.append("image", item.file)
+      appendConvertParamsToFormData(formData, effectiveTrace)
+
+      const response = await fetch("/api/convert", {
+        method: "POST",
+        body: formData,
+      })
+
+      const data = (await response.json()) as { svg?: string; error?: string }
+      if (!response.ok || !data.svg) {
+        throw new Error(data.error ?? "Preview failed")
+      }
+      setPreviewSvg(data.svg)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to preview trace")
+    } finally {
+      setIsPreviewing(false)
+    }
   }
 
   return (
     <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
       {/* Header row */}
       <div className="flex items-center gap-3 px-3 py-2.5">
+        {/* Thumbnail */}
+        <div className="w-8 h-8 shrink-0 rounded bg-[var(--color-surface-sunken)] border border-[var(--color-border-light)] overflow-hidden flex items-center justify-center relative">
+          {item.status === "done" && item.svgResult ? (
+            <div
+              className="w-full h-full [&>svg]:w-full [&>svg]:h-full object-contain p-0.5"
+              dangerouslySetInnerHTML={{ __html: item.svgResult }}
+            />
+          ) : objectUrl ? (
+            <img src={objectUrl} alt={item.file.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-4 h-4 bg-[var(--color-border)] rounded animate-pulse" />
+          )}
+        </div>
+
         <div className="flex-1 min-w-0">
           <p
             className="text-sm font-medium text-[var(--color-text)] truncate"
@@ -146,45 +219,102 @@ export function BatchQueueItem({
                 <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-widest">
                   Per-image settings override
                 </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClearOverride}
-                  className="text-[10px] h-6 px-2 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-                >
-                  Reset to global
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePreviewTrace}
+                    disabled={isPreviewing || isProcessing}
+                    className="text-[10px] h-6 px-2.5 flex items-center gap-1.5"
+                  >
+                    {isPreviewing ? (
+                      <Loader className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Play className="w-3 h-3" />
+                    )}
+                    Preview Trace
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleClearOverride}
+                    className="text-[10px] h-6 px-2 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                  >
+                    Reset to global
+                  </Button>
+                </div>
               </div>
 
-              <div>
-                <p className="text-xs font-medium text-[var(--color-text-muted)] mb-3">
-                  Trace Settings
-                </p>
-                <PotraceControls
-                  params={effectiveTrace}
-                  setParam={(key, value) =>
-                    onSetTraceOverride(item.id, {
-                      ...effectiveTrace,
-                      [key]: value,
-                    })
-                  }
-                />
-              </div>
+              {/* Live Preview Box */}
+              <AnimatePresence>
+                {previewSvg && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: "auto", marginTop: -8 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    className="w-full flex gap-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3 overflow-hidden"
+                  >
+                    <div className="flex-1 flex flex-col gap-1.5">
+                      <p className="text-[10px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                        Original
+                      </p>
+                      <div className="flex-1 min-h-[100px] flex items-center justify-center bg-[var(--color-surface-raised)] rounded overflow-hidden">
+                        {objectUrl && (
+                          <img
+                            src={objectUrl}
+                            alt="Original preview"
+                            className="max-w-full max-h-[120px] object-contain"
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-1 flex flex-col gap-1.5">
+                      <p className="text-[10px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                        Trace Preview
+                      </p>
+                      <div className="flex-1 min-h-[100px] flex items-center justify-center bg-[var(--color-surface-raised)] rounded overflow-hidden">
+                        <div
+                          className="max-w-full max-h-[120px] [&>svg]:max-w-full [&>svg]:max-h-[120px]"
+                          dangerouslySetInnerHTML={{ __html: previewSvg }}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-              <div>
-                <p className="text-xs font-medium text-[var(--color-text-muted)] mb-3">
-                  Animation Settings
-                </p>
-                <AnimationControls
-                  params={effectiveAnim}
-                  setParam={(key, value) =>
-                    onSetAnimOverride(item.id, {
-                      ...effectiveAnim,
-                      [key]: value,
-                    })
-                  }
-                  idPrefix={`item-${item.id}`}
-                />
+              <div className="flex flex-col xl:flex-row gap-6">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-[var(--color-text-muted)] mb-3">
+                    Trace Settings
+                  </p>
+                  <PotraceControls
+                    params={effectiveTrace}
+                    setParam={(key, value) => {
+                      onSetTraceOverride(item.id, {
+                        ...effectiveTrace,
+                        [key]: value,
+                      })
+                      if (previewSvg) setPreviewSvg(null) // Clear preview on change
+                    }}
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-[var(--color-text-muted)] mb-3 xl:mt-0 mt-2">
+                    Animation Settings
+                  </p>
+                  <AnimationControls
+                    params={effectiveAnim}
+                    setParam={(key, value) =>
+                      onSetAnimOverride(item.id, {
+                        ...effectiveAnim,
+                        [key]: value,
+                      })
+                    }
+                    idPrefix={`item-${item.id}`}
+                  />
+                </div>
               </div>
             </div>
           </motion.div>
