@@ -83,7 +83,7 @@ export function BatchUploader({ onFilesSelected, disabled }: BatchUploaderProps)
   }
 
   return (
-    <div className="flex flex-col items-center gap-2 w-full max-w-lg mx-auto">
+    <div className="relative flex flex-col items-center gap-2 w-full max-w-lg mx-auto">
       <div
         onClick={() => !disabled && fileInputRef.current?.click()}
         onDragOver={handleDragOver}
@@ -153,6 +153,22 @@ export function BatchUploader({ onFilesSelected, disabled }: BatchUploaderProps)
           onChange={handleFileInput}
           className="hidden"
         />
+      </div>
+
+      {/* Side Tip for Multi-Select */}
+      <div className="lg:absolute lg:left-[calc(100%+2rem)] lg:top-1/2 lg:-translate-y-1/2 w-full lg:w-48 text-center lg:text-left text-[11px] text-[var(--color-text-muted)] mt-1 lg:mt-0 px-4 lg:px-0">
+        <p>
+          <span className="font-semibold text-[var(--color-text)]">Pro tip:</span> You can select
+          multiple images at once by holding{" "}
+          <kbd className="bg-[var(--color-surface-raised)] border border-[var(--color-border)] px-1 py-0.5 rounded text-[10px] font-sans">
+            Shift
+          </kbd>{" "}
+          or{" "}
+          <kbd className="bg-[var(--color-surface-raised)] border border-[var(--color-border)] px-1 py-0.5 rounded text-[10px] font-sans">
+            Ctrl/Cmd
+          </kbd>{" "}
+          in the file picker.
+        </p>
       </div>
     </div>
   )

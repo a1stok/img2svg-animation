@@ -145,29 +145,11 @@ export default function Index() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 16 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="w-full flex flex-col items-center gap-8"
+            className="w-full flex flex-col items-center gap-8 relative z-20"
           >
             <ImageUploader onFileSelected={handleFileSelected} error={null} />
 
             <AnimatePresence mode="popLayout">
-              {selectedFile === null && (
-                <motion.div
-                  key="initial-state"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="w-full flex flex-col items-center"
-                >
-                  <p className="text-center text-[10px] sm:text-[11px] text-[var(--color-text-muted)] max-w-sm mx-auto -mt-4 mb-[45vh] relative z-10">
-                    <span className="font-semibold text-[var(--color-text)]">Tip:</span> Simple
-                    graphics and cartoon images trace into cleaner animation paths than detailed
-                    photos.
-                  </p>
-                  <BackgroundAnimation />
-                </motion.div>
-              )}
-
               {selectedFile !== null && (
                 <motion.section
                   key="settings"
@@ -262,9 +244,29 @@ export default function Index() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -16 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="w-full"
+            className="w-full relative z-20"
           >
             <BatchManager batch={batch} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Global Background Animation & Tip */}
+      <AnimatePresence>
+        {selectedFile === null && batch.queue.length === 0 && (
+          <motion.div
+            key="global-initial-state"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="w-full flex flex-col items-center mt-[-1rem] pointer-events-none relative z-10"
+          >
+            <p className="text-center text-[10px] sm:text-[11px] text-[var(--color-text-muted)] max-w-sm mx-auto mb-[45vh]">
+              <span className="font-semibold text-[var(--color-text)]">Tip:</span> Simple graphics
+              and cartoon images trace into cleaner animation paths than detailed photos.
+            </p>
+            <BackgroundAnimation />
           </motion.div>
         )}
       </AnimatePresence>
