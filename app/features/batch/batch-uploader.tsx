@@ -1,8 +1,7 @@
 import { useRef, useState } from "react"
 import { validateImageFile } from "../uploader/validate-image-file"
 import { toast } from "sonner"
-import { Upload, FolderOpen } from "lucide-react"
-import { Button } from "../../components/ui/button"
+import { Upload } from "lucide-react"
 import { DitherImageFrame } from "../../components/ui/dither-image"
 
 type BatchUploaderProps = {
@@ -15,15 +14,13 @@ const ACCEPTED_MIME_TYPES = new Set(["image/png", "image/jpeg", "image/webp"])
 export function BatchUploader({ onFilesSelected, disabled }: BatchUploaderProps) {
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const folderInputRef = useRef<HTMLInputElement>(null)
 
-  function processFiles(rawFiles: FileList | File[], fromFolder = false) {
+  function processFiles(rawFiles: FileList | File[], fromDrag = false) {
     const files = Array.from(rawFiles)
 
-    // When coming from a folder, silently skip non-image files (e.g. .DS_Store,
-    // Thumbs.db, text docs) — the user knows folders have mixed content.
-    // When coming from explicit file selection, warn about invalid picks.
-    const imageFiles = fromFolder
+    // When coming from a drag (which could be a mixed folder), silently skip non-image files.
+    // When coming from explicit file selection, we can warn about invalid picks.
+    const imageFiles = fromDrag
       ? files.filter((f) => {
           if (f.type && ACCEPTED_MIME_TYPES.has(f.type)) return true
           const ext = f.name.toLowerCase().split(".").pop()
@@ -43,22 +40,21 @@ export function BatchUploader({ onFilesSelected, disabled }: BatchUploaderProps)
       }
     }
 
-    if (!fromFolder && invalid.length > 0) {
+    if (!fromDrag && invalid.length > 0) {
       toast.error(`${invalid.length} file(s) skipped: unsupported type or over 5 MB.`)
-    } else if (fromFolder && invalid.length > 0) {
-      // Only warn about size violations from folders (type was already filtered)
+    } else if (fromDrag && invalid.length > 0) {
       toast.warning(`${invalid.length} image(s) skipped: over 5 MB limit.`)
     }
 
     if (valid.length > 0) {
       onFilesSelected(valid)
-    } else if (fromFolder && files.length > 0 && valid.length === 0) {
-      toast.error("No supported images found in that folder.")
+    } else if (fromDrag && files.length > 0 && valid.length === 0) {
+      toast.error("No supported images found.")
     }
   }
 
-  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>, fromFolder = false) {
-    if (e.target.files) processFiles(e.target.files, fromFolder)
+  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) processFiles(e.target.files, false)
     e.target.value = ""
   }
 
@@ -81,7 +77,7 @@ export function BatchUploader({ onFilesSelected, disabled }: BatchUploaderProps)
     e.preventDefault()
     setIsDragging(false)
     if (e.dataTransfer.files.length > 0) {
-      // Drag-and-drop — treat as folder-like (silently skip non-images)
+      // Drag-and-drop — silently skip non-images
       processFiles(e.dataTransfer.files, true)
     }
   }
@@ -103,7 +99,7 @@ export function BatchUploader({ onFilesSelected, disabled }: BatchUploaderProps)
               : "ring-2 ring-transparent hover:ring-[var(--color-accent)]/30 hover:scale-[1.01] cursor-pointer",
         ].join(" ")}
       >
-        {/* Dither background — same as single uploader */}
+        {/* Dither background */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <DitherImageFrame
             size="md"
@@ -146,38 +142,15 @@ export function BatchUploader({ onFilesSelected, disabled }: BatchUploaderProps)
           <p className="text-xs text-[var(--color-text-muted)] bg-[var(--color-surface-sunken)]/80 backdrop-blur-sm px-3 py-1 rounded-full border border-[var(--color-border)]">
             PNG, JPEG, WEBP — max 5 MB each
           </p>
-
-          {/* Folder button — separate from click-to-select so it targets the folder input */}
-          <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 mt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => folderInputRef.current?.click()}
-              className="flex items-center gap-2 bg-[var(--color-surface-raised)]/80 backdrop-blur-sm border-[var(--color-border-light)] hover:bg-[var(--color-surface-hover)]"
-            >
-              <FolderOpen className="w-3.5 h-3.5" />
-              Select Folder
-            </Button>
-          </div>
         </div>
 
-        {/* Hidden file inputs */}
+        {/* Hidden file input */}
         <input
           ref={fileInputRef}
           type="file"
           multiple
           accept="image/png,image/jpeg,image/webp"
-          onChange={(e) => handleFileInput(e, false)}
-          className="hidden"
-        />
-        {/* webkitdirectory is non-standard but has broad browser support */}
-        <input
-          ref={folderInputRef}
-          type="file"
-          // @ts-expect-error — webkitdirectory is not in TypeScript's HTMLInputElement types
-          webkitdirectory=""
-          multiple
-          onChange={(e) => handleFileInput(e, true)}
+          onChange={handleFileInput}
           className="hidden"
         />
       </div>
