@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   X,
@@ -78,9 +78,12 @@ export function BatchQueueItem({
   const [objectUrl, setObjectUrl] = useState<string | null>(null)
 
   // On-demand preview state
+  const [hasPreviewed, setHasPreviewed] = useState(false)
   const [isPreviewing, setIsPreviewing] = useState(false)
   const [previewSvg, setPreviewSvg] = useState<string | null>(null)
   const [animationUrl, setAnimationUrl] = useState<string | null>(null)
+
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   const effectiveTrace = item.traceOverride ?? globalTraceParams
   const effectiveAnim = item.animOverride ?? globalAnimParams
@@ -113,6 +116,48 @@ export function BatchQueueItem({
     return () => URL.revokeObjectURL(url)
   }, [previewSvg, effectiveAnim])
 
+  // Debounced auto-fetch for trace preview when parameters change (if preview was activated)
+  useEffect(() => {
+    if (!hasPreviewed) return
+
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
+    setIsPreviewing(true)
+
+    const timer = setTimeout(() => {
+      void (async () => {
+        try {
+          const formData = new FormData()
+          formData.append("image", item.file)
+          appendConvertParamsToFormData(formData, effectiveTrace)
+
+          const response = await fetch("/api/convert", {
+            method: "POST",
+            body: formData,
+            signal: controller.signal,
+          })
+
+          const data = (await response.json()) as { svg?: string; error?: string }
+          if (!response.ok || !data.svg) {
+            throw new Error(data.error ?? "Preview failed")
+          }
+          setPreviewSvg(data.svg)
+        } catch (err) {
+          if (err instanceof Error && err.name === "AbortError") return
+          toast.error(err instanceof Error ? err.message : "Failed to preview trace")
+        } finally {
+          setIsPreviewing(false)
+        }
+      })()
+    }, 150)
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [effectiveTrace, hasPreviewed, item.file])
+
   function handleToggleExpand() {
     if (!expanded && item.traceOverride === null) {
       // Initialize with current global params as the starting point for overrides
@@ -125,34 +170,13 @@ export function BatchQueueItem({
   function handleClearOverride() {
     onSetTraceOverride(item.id, null)
     onSetAnimOverride(item.id, null)
+    setHasPreviewed(false)
     setPreviewSvg(null) // Reset preview since params changed back to global
     setExpanded(false)
   }
 
-  async function handlePreviewTrace() {
-    if (isPreviewing) return
-    setIsPreviewing(true)
-    setPreviewSvg(null)
-    try {
-      const formData = new FormData()
-      formData.append("image", item.file)
-      appendConvertParamsToFormData(formData, effectiveTrace)
-
-      const response = await fetch("/api/convert", {
-        method: "POST",
-        body: formData,
-      })
-
-      const data = (await response.json()) as { svg?: string; error?: string }
-      if (!response.ok || !data.svg) {
-        throw new Error(data.error ?? "Preview failed")
-      }
-      setPreviewSvg(data.svg)
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to preview trace")
-    } finally {
-      setIsPreviewing(false)
-    }
+  function handlePreviewTrace() {
+    setHasPreviewed(true)
   }
 
   return (
