@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import type { Route } from "./+types/_index"
@@ -27,15 +27,15 @@ export default function Index() {
 
   const batch = useBatchConversion()
 
-  // Surface conversion errors as toasts
-  if (convertError) {
-    toast.error(convertError)
-  }
+  useEffect(() => {
+    if (convertError) {
+      toast.error(convertError)
+    }
+  }, [convertError])
 
   function handleModeChange(next: Mode) {
     if (next === mode) return
     setMode(next)
-    // Reset single mode state when switching away
     if (next === "batch") {
       setSelectedFile(null)
       resetState()
@@ -44,7 +44,6 @@ export default function Index() {
         setObjectUrl(null)
       }
     }
-    // Reset batch queue when switching away
     if (next === "single") {
       batch.clearQueue()
     }
@@ -75,47 +74,49 @@ export default function Index() {
 
   return (
     <div className="flex flex-col items-center py-8 px-4 gap-8 w-full max-w-4xl mx-auto">
-      <header className="text-center flex flex-col gap-2 pt-4">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">SVG Animator</h1>
-        <p className="text-xs text-[var(--color-text-muted)] max-w-sm mx-auto">
-          Upload any image to trace it into precise SVG paths and generate a custom drawing
-          animation.
-        </p>
+      {/* Header row: title + mode toggle inline */}
+      <header className="w-full flex items-center justify-between gap-4 pt-4">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">SVG Animator</h1>
+          <p className="text-xs text-[var(--color-text-muted)] mt-1 max-w-xs">
+            Upload any image to trace it into SVG paths and animate it.
+          </p>
+        </div>
+
+        {/* Single / Batch toggle — right side of header */}
+        <div
+          className="flex items-center bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg p-1 gap-1 shrink-0"
+          role="tablist"
+          aria-label="Conversion mode"
+        >
+          {(["single", "batch"] as const).map((m) => (
+            <button
+              key={m}
+              role="tab"
+              aria-selected={mode === m}
+              onClick={() => handleModeChange(m)}
+              className={[
+                "px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
+                mode === m
+                  ? "bg-[var(--color-accent)] text-white shadow-sm"
+                  : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]",
+              ].join(" ")}
+            >
+              {m === "single" ? "Single" : "Batch"}
+            </button>
+          ))}
+        </div>
       </header>
 
-      {/* Single / Batch mode toggle */}
-      <div
-        className="flex items-center bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg p-1 gap-1"
-        role="tablist"
-        aria-label="Conversion mode"
-      >
-        {(["single", "batch"] as const).map((m) => (
-          <button
-            key={m}
-            role="tab"
-            aria-selected={mode === m}
-            onClick={() => handleModeChange(m)}
-            className={[
-              "px-4 py-1.5 rounded-md text-sm font-medium transition-all capitalize",
-              mode === m
-                ? "bg-[var(--color-accent)] text-white shadow-sm"
-                : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]",
-            ].join(" ")}
-          >
-            {m === "single" ? "Single" : "Batch"}
-          </button>
-        ))}
-      </div>
-
-      {/* Modes */}
+      {/* Mode content */}
       <AnimatePresence mode="wait" initial={false}>
         {mode === "single" ? (
           <motion.div
             key="single-mode"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 16 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
             className="w-full flex flex-col items-center gap-8"
           >
             <ImageUploader onFileSelected={handleFileSelected} error={null} />
@@ -127,7 +128,7 @@ export default function Index() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.4 }}
                   className="w-full flex flex-col items-center"
                 >
                   <p className="text-center text-[10px] sm:text-[11px] text-[var(--color-text-muted)] max-w-sm mx-auto -mt-4 mb-[45vh] relative z-10">
@@ -145,7 +146,7 @@ export default function Index() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
                   className="w-full flex flex-col gap-6"
                   aria-label="Conversion settings"
                 >
@@ -173,7 +174,7 @@ export default function Index() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+                  transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
                   className="w-full flex flex-col gap-8"
                   aria-label="Previews"
                 >
@@ -217,7 +218,7 @@ export default function Index() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+                  transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
                   className="w-full flex justify-center mt-8"
                   aria-label="Animation Config"
                 >
@@ -229,10 +230,10 @@ export default function Index() {
         ) : (
           <motion.div
             key="batch-mode"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -16 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
             className="w-full"
           >
             <BatchManager batch={batch} />
