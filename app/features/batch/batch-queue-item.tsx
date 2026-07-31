@@ -313,12 +313,14 @@ export function BatchQueueItem({
                       </p>
                       <div className="flex-1 flex items-center justify-center md:justify-start overflow-hidden relative">
                         {animationUrl ? (
-                          <iframe
-                            src={animationUrl}
-                            scrolling="no"
-                            className="w-full h-[240px] border-0 rounded-lg shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-                            title="Animation Preview"
-                          />
+                          <div className="w-full h-[240px] rounded-lg overflow-hidden shadow-sm [transform:translateZ(0)]">
+                            <iframe
+                              src={animationUrl}
+                              scrolling="no"
+                              className="w-full h-full border-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                              title="Animation Preview"
+                            />
+                          </div>
                         ) : (
                           <div
                             className="max-w-full max-h-[240px] [&>svg]:max-w-full [&>svg]:max-h-[240px] [&>svg]:rounded-lg [&>svg]:shadow-sm"
