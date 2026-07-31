@@ -103,7 +103,7 @@ animate(paths, {
     .svg-container {
       width: 100%;
       max-width: 600px;
-      padding: ${compact ? "0.5rem" : "2rem"};
+      padding: ${compact ? "0" : "2rem"};
       display: flex;
       align-items: center;
       justify-content: center;
@@ -111,7 +111,7 @@ animate(paths, {
     .svg-container svg {
       width: 100%;
       height: auto;
-      ${compact ? "border-radius: 0.5rem;" : ""}
+      ${compact ? "background-color: white; border-radius: 0.5rem;" : ""}
     }
     ${inlineCSS}
   </style>

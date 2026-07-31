@@ -323,7 +323,7 @@ export function BatchQueueItem({
                           </div>
                         ) : (
                           <div
-                            className="max-w-full max-h-[240px] [&>svg]:max-w-full [&>svg]:max-h-[240px] [&>svg]:rounded-lg [&>svg]:shadow-sm"
+                            className="max-w-full max-h-[240px] [&>svg]:max-w-full [&>svg]:max-h-[240px] [&>svg]:rounded-lg [&>svg]:shadow-sm [&>svg]:bg-white"
                             dangerouslySetInnerHTML={{ __html: previewSvg }}
                           />
                         )}
