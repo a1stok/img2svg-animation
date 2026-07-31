@@ -31,7 +31,6 @@ export async function traceImageToSvg(
       turnPolicy: params.turnPolicy,
       blackOnWhite: params.blackOnWhite,
       color: params.color,
-      background: params.background,
     }
 
     potrace.trace(
