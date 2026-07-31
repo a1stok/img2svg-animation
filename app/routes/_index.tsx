@@ -74,37 +74,65 @@ export default function Index() {
 
   return (
     <div className="flex flex-col items-center py-8 px-4 gap-8 w-full max-w-4xl mx-auto">
-      {/* Header row: title + mode toggle inline */}
-      <header className="w-full flex items-center justify-between gap-4 pt-4">
-        <div>
+      {/* Header row: title centered, toggle on the absolute right */}
+      <header className="relative w-full flex flex-col items-center pt-4">
+        <div className="text-center">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">SVG Animator</h1>
-          <p className="text-xs text-[var(--color-text-muted)] mt-1 max-w-xs">
+          <p className="text-xs text-[var(--color-text-muted)] mt-1 max-w-sm mx-auto">
             Upload any image to trace it into SVG paths and animate it.
           </p>
         </div>
 
         {/* Single / Batch toggle — right side of header */}
-        <div
-          className="flex items-center bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg p-1 gap-1 shrink-0"
-          role="tablist"
-          aria-label="Conversion mode"
-        >
-          {(["single", "batch"] as const).map((m) => (
-            <button
-              key={m}
-              role="tab"
-              aria-selected={mode === m}
-              onClick={() => handleModeChange(m)}
-              className={[
-                "px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
-                mode === m
-                  ? "bg-[var(--color-accent)] text-white shadow-sm"
-                  : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]",
-              ].join(" ")}
-            >
-              {m === "single" ? "Single" : "Batch"}
-            </button>
-          ))}
+        <div className="absolute right-0 top-4 hidden sm:flex">
+          <div
+            className="flex items-center bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg p-1 gap-1 shrink-0"
+            role="tablist"
+            aria-label="Conversion mode"
+          >
+            {(["single", "batch"] as const).map((m) => (
+              <button
+                key={m}
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => handleModeChange(m)}
+                className={[
+                  "px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
+                  mode === m
+                    ? "bg-[var(--color-accent)] text-white shadow-sm"
+                    : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]",
+                ].join(" ")}
+              >
+                {m === "single" ? "Single" : "Batch"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile toggle — centered below title on small screens */}
+        <div className="flex sm:hidden mt-4">
+          <div
+            className="flex items-center bg-[var(--color-surface-raised)] border border-[var(--color-border)] rounded-lg p-1 gap-1 shrink-0"
+            role="tablist"
+            aria-label="Conversion mode"
+          >
+            {(["single", "batch"] as const).map((m) => (
+              <button
+                key={m}
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => handleModeChange(m)}
+                className={[
+                  "px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
+                  mode === m
+                    ? "bg-[var(--color-accent)] text-white shadow-sm"
+                    : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]",
+                ].join(" ")}
+              >
+                {m === "single" ? "Single" : "Batch"}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
