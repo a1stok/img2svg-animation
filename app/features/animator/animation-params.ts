@@ -97,6 +97,7 @@ animate(paths, {
       align-items: center;
       justify-content: center;
       background-color: ${compact ? "transparent" : "#05070a"};
+      ${compact ? "overflow: hidden;" : ""}
     }
     .svg-container {
       width: 100%;

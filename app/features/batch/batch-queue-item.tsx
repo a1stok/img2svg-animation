@@ -289,38 +289,39 @@ export function BatchQueueItem({
                 {previewSvg && (
                   <motion.div
                     initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                    animate={{ opacity: 1, height: "auto", marginTop: -8 }}
+                    animate={{ opacity: 1, height: "auto", marginTop: 0 }}
                     exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                    className="w-full flex gap-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3 overflow-hidden"
+                    className="w-full flex flex-col md:flex-row gap-6 mb-2 overflow-hidden"
                   >
-                    <div className="flex-1 flex flex-col gap-1.5">
-                      <p className="text-[10px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                    <div className="flex-1 flex flex-col gap-2">
+                      <p className="text-[10px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider text-center md:text-left">
                         Original
                       </p>
-                      <div className="flex-1 min-h-[140px] flex items-center justify-center bg-[var(--color-surface-raised)] rounded overflow-hidden">
+                      <div className="flex-1 flex items-center justify-center md:justify-start overflow-hidden">
                         {objectUrl && (
                           <img
                             src={objectUrl}
                             alt="Original preview"
-                            className="max-w-full max-h-[160px] object-contain"
+                            className="max-w-full max-h-[240px] w-auto h-auto object-contain rounded-lg shadow-sm"
                           />
                         )}
                       </div>
                     </div>
-                    <div className="flex-1 flex flex-col gap-1.5">
-                      <p className="text-[10px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                    <div className="flex-1 flex flex-col gap-2">
+                      <p className="text-[10px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider text-center md:text-left">
                         Animation Preview
                       </p>
-                      <div className="flex-1 min-h-[140px] flex items-center justify-center bg-[var(--color-surface-raised)] rounded overflow-hidden relative">
+                      <div className="flex-1 flex items-center justify-center md:justify-start overflow-hidden relative">
                         {animationUrl ? (
                           <iframe
                             src={animationUrl}
-                            className="w-full h-full min-h-[160px] border-0"
+                            scrolling="no"
+                            className="w-full h-[240px] border-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                             title="Animation Preview"
                           />
                         ) : (
                           <div
-                            className="max-w-full max-h-[160px] [&>svg]:max-w-full [&>svg]:max-h-[160px]"
+                            className="max-w-full max-h-[240px] [&>svg]:max-w-full [&>svg]:max-h-[240px]"
                             dangerouslySetInnerHTML={{ __html: previewSvg }}
                           />
                         )}
