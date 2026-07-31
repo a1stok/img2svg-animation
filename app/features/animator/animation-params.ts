@@ -88,6 +88,7 @@ animate(paths, {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <title>SVG Animation</title>
   <style>
     body {
@@ -103,10 +104,14 @@ animate(paths, {
       width: 100%;
       max-width: 600px;
       padding: ${compact ? "0.5rem" : "2rem"};
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .svg-container svg {
       width: 100%;
       height: auto;
+      ${compact ? "border-radius: 0.5rem;" : ""}
     }
     ${inlineCSS}
   </style>
