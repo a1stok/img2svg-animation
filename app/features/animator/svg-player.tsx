@@ -13,19 +13,24 @@ import {
 import { animate, svg, stagger } from "animejs"
 import { toast } from "sonner"
 import { Copy } from "lucide-react"
+import {
+  type AnimationParams,
+  defaultAnimationParams,
+  generateAnimationHtml,
+} from "./animation-params"
 
 export type SvgPlayerProps = {
   svgString: string
 }
 
 export function SvgPlayer({ svgString }: SvgPlayerProps) {
-  const [duration, setDuration] = useState(2000)
-  const [delay, setDelay] = useState(0)
-  const [easing, setEasing] = useState("inOutSine")
-  const [direction, setDirection] = useState("normal")
-  const [loop, setLoop] = useState(false)
-  const [strokeWidth, setStrokeWidth] = useState(1)
-  const [fadeInFill, setFadeInFill] = useState(false)
+  const [duration, setDuration] = useState(defaultAnimationParams.duration)
+  const [delay, setDelay] = useState(defaultAnimationParams.delay)
+  const [easing, setEasing] = useState(defaultAnimationParams.easing)
+  const [direction, setDirection] = useState(defaultAnimationParams.direction)
+  const [loop, setLoop] = useState(defaultAnimationParams.loop)
+  const [strokeWidth, setStrokeWidth] = useState(defaultAnimationParams.strokeWidth)
+  const [fadeInFill, setFadeInFill] = useState(defaultAnimationParams.fadeInFill)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<any>(null)
@@ -128,7 +133,7 @@ export function SvgPlayer({ svgString }: SvgPlayerProps) {
     animationRef.current?.restart()
   }
 
-  // Generate the Anime.js V4 executable code snippet
+  // Generate the Anime.js V4 code snippet for the Integration Guide panel
   const generatedCSS = `/* --- Required CSS --- */
 .svg-container path {
   ${fadeInFill ? "fill-opacity: 0;" : "fill: transparent;"}
@@ -173,8 +178,7 @@ animate(paths, {
 });
 `
     : ""
-}${direction === "reverse" ? `\nanimation.reverse();` : ""}
-`.trim()
+}${direction === "reverse" ? `\nanimation.reverse();` : ""}`.trim()
 
   const displayCode = `${generatedCSS}\n\n${generatedJS}`
 
@@ -194,44 +198,16 @@ animate(paths, {
   }
 
   function handleDownloadAnimation() {
-    const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SVG Animation</title>
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #05070a;
+    const params: AnimationParams = {
+      duration,
+      delay,
+      easing,
+      direction,
+      loop,
+      strokeWidth,
+      fadeInFill,
     }
-    .svg-container {
-      width: 100%;
-      max-width: 600px;
-      padding: 2rem;
-    }
-    .svg-container svg {
-      width: 100%;
-      height: auto;
-    }
-    ${generatedCSS.replace("/* --- Required CSS --- */\n", "").replace(/\n/g, "\n    ")}
-  </style>
-</head>
-<body>
-  <div class="svg-container">
-    ${svgString}
-  </div>
-
-  <script type="module">
-${generatedJS.replace(/from "animejs";?/, 'from "https://esm.sh/animejs@4.5.0";')}
-  </script>
-</body>
-</html>`
-
+    const htmlContent = generateAnimationHtml(svgString, params)
     const blob = new Blob([htmlContent], { type: "text/html" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")

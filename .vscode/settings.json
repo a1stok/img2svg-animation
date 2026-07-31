@@ -1,0 +1,8 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "/^git status --short ; git add app/root\\.tsx ; git commit -m \"Add favicon\" ; git push$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
+}
