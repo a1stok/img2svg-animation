@@ -316,12 +316,12 @@ export function BatchQueueItem({
                           <iframe
                             src={animationUrl}
                             scrolling="no"
-                            className="w-full h-[240px] border-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                            className="w-full h-[240px] border-0 rounded-lg shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                             title="Animation Preview"
                           />
                         ) : (
                           <div
-                            className="max-w-full max-h-[240px] [&>svg]:max-w-full [&>svg]:max-h-[240px]"
+                            className="max-w-full max-h-[240px] [&>svg]:max-w-full [&>svg]:max-h-[240px] [&>svg]:rounded-lg [&>svg]:shadow-sm"
                             dangerouslySetInnerHTML={{ __html: previewSvg }}
                           />
                         )}
